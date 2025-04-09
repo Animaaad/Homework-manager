@@ -15,4 +15,14 @@ function getMessages() {
         });
 }
 
-export default getMessages;
+function addMessage(message) {
+    return fetch("http://localhost:3000/api/v1/messages", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message)
+    });
+}
+
+export {getMessages, addMessage}

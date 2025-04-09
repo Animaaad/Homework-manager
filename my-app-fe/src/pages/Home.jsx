@@ -1,11 +1,23 @@
-import { useState } from 'react';
+import { useState, useRef} from 'react';
+import {addMessage} from '../services/messagesService'
+
 
 function Home() {
-    const [homeworks, setHomeworks] = useState([]);
+  const [homeworks, setHomeworks] = useState([]);
+
+  function publishNewMessage() {
+    addMessage({
+      "message_id": crypto.randomUUID(),
+      "text": homeworks
+    })
+      .catch((error) => {
+        console.log(error.message);
+      })
+  }
 
   const handleAddHomework = () => {
     const id = Date.now(); // Unique ID
-    setHomeworks([...homeworks, { id, showInput: false, text: ''}]);
+    setHomeworks([...homeworks, { id, showInput: false, text: '' }]);
   };
 
   const handleToggleInput = (id) => {
@@ -35,7 +47,7 @@ function Home() {
         Add Homework
       </button>
 
-      
+
 
       {homeworks.map((hw) => (
         <div key={hw.id} className="add-hws">
@@ -53,12 +65,13 @@ function Home() {
             >
               ❌
             </button>
-            <button className='Publish'>
-            Publish
+            <button className='Publish' onClick={publishNewMessage}>
+              Publish
             </button>
           </div>
           {hw.showInput && (
             <input
+              id="message-text"
               type="text"
               value={hw.text}
               onChange={(e) => handleInputChange(hw.id, e.target.value)}

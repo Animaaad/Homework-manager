@@ -1,6 +1,6 @@
 import Registration from "../components/Registration"
 import ToRegistation from '../components/ToRegistration'
-import getMessages from '../services/messagesService'
+import {getMessages} from '../services/messagesService'
 import { useEffect, useState } from 'react';
 
 function FirstPage() {
