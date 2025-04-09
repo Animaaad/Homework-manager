@@ -1,11 +1,11 @@
-import {useState} from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 function RegistrationPage() {
     const mockUsers = {
         alice: 'pass123',
         bob: 'qwerty',
-      };
+    };
 
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
@@ -15,9 +15,9 @@ function RegistrationPage() {
         e.preventDefault()
         const userPassword = mockUsers[username.toLowerCase()];
         if (userPassword && password === userPassword) {
-          navigate('/home');
+            navigate('/home');
         } else {
-          setError('Invalid username or password.');
+            setError('Invalid username or password.');
         }
     };
 
@@ -31,14 +31,14 @@ function RegistrationPage() {
                     onChange={(e) => setUsername(e.target.value)}
                 />
                 <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border p-2 rounded"
-                required
-                 />
-                <button type = "submit" className = "submit-button">
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full border p-2 rounded"
+                    required
+                />
+                <button type="submit" className="submit-button">
                     Submit
                 </button>
                 {error && <p className="text-red-500 mt-2">{error}</p>}
