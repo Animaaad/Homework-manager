@@ -1,6 +1,6 @@
 
 function getMessages() {
-    return fetch('http://localhost:3000/api/v1/messages').then( // promise is resolved
+    return fetch('http://localhost:3001/api/v1/messages').then( // promise is resolved
         (response) => {
             if (!response.ok) { // HTTP status code NOT between 200-299
                 throw new Error("Error getting messages");
@@ -16,7 +16,7 @@ function getMessages() {
 }
 
 function addMessage(message) {
-    return fetch("http://localhost:3000/api/v1/messages", {
+    return fetch("http://localhost:3001/api/v1/messages", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
