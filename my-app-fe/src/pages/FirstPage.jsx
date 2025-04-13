@@ -1,12 +1,13 @@
-import Registration from "../components/Registration"
-import ToRegistation from '../components/ToRegistration'
+import ToLogin from "../components/ToLogin";
+import ToRegistration from '../components/ToRegistration'
+import ToTLogin from "../components/ToTLogin";
 import {getMessages} from '../services/messagesService'
 import { useEffect, useState } from 'react';
 
 function FirstPage() {
 
     const [messages, setMessages] = useState([]);
-    useEffect(() => {
+    /*useEffect(() => {
         getMessages().then(
             (messages) => setMessages(messages)
         );
@@ -16,13 +17,18 @@ function FirstPage() {
             );
         }, 10000);
         return () => clearInterval(fetchMessagesInterval);
-    }, []);
+    }, []);*/
 
     return (
         <div>
-            <ToRegistation />
             <div className="firstPage">
-                <Registration />
+                <ToRegistration />
+            </div>
+            <div className="firstPage">
+                <ToLogin />
+            </div>
+            <div className="firstPage">
+                <ToTLogin />
             </div>
             <div>
                 <h1>{messages}</h1>

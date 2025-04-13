@@ -2,23 +2,16 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 function RegistrationPage() {
-    const mockUsers = {
-        alice: 'pass123',
-        bob: 'qwerty',
-    };
 
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
     const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const navigate = useNavigate();
     const handleSubm = (e) => {
         e.preventDefault()
-        const userPassword = mockUsers[username.toLowerCase()];
-        if (userPassword && password === userPassword) {
-            navigate('/home');
-        } else {
-            setError('Invalid username or password.');
-        }
+        navigate('/home');
     };
 
     return (
@@ -35,7 +28,20 @@ function RegistrationPage() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border p-2 rounded"
+                    required
+                />
+                <input
+                    type="text"
+                    placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                />
+                <input
+                    type="text"
+                    placeholder="LastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     required
                 />
                 <button type="submit" className="submit-button">
