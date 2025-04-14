@@ -2,7 +2,7 @@ import './App.css'
 import FirstPage from './pages/FirstPage'
 import {Routes, Route} from "react-router-dom"
 import RegistrationPage from './pages/RegistrationPage'
-import {THome} from './pages/Home'
+import {Home} from './pages/Home'
 import TLogInPage from './pages/TLoginPage'
 import LogInPage from './pages/LogInPage'
 function App() {
@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element = {<FirstPage />}/>
           <Route path="/register" element = {<RegistrationPage />}/>
-          <Route path="/home" element = {<THome />}/>
+          <Route path="/home" element = {<Home />}/>
           <Route path="/login" element = {<LogInPage />}/>
           <Route path="/tlogin" element = {<TLogInPage />}/>
         </Routes>

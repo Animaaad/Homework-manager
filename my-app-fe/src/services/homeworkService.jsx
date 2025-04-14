@@ -1,11 +1,12 @@
 
-function getMessages() {
-    return fetch('http://localhost:3001/api/v1/messages').then( // promise is resolved
+function getHomeworks() {
+    return fetch('/api/v1/homeworks').then( // promise is resolved
         (response) => {
             if (!response.ok) { // HTTP status code NOT between 200-299
                 throw new Error("Error getting messages");
             }
-            return response.json();
+            console.log("Response ok"); 
+            return response.json(); 
         }).catch((error) => { // promise is rejected
             // Better way would be to throw error here and let the
             // client handle (e.g. show error message)
@@ -15,7 +16,7 @@ function getMessages() {
         });
 }
 
-function addMessage(message) {
+/*function addMessage(message) {
     return fetch("http://localhost:3001/api/v1/messages", {
         method: "POST",
         headers: {
@@ -24,5 +25,5 @@ function addMessage(message) {
         body: JSON.stringify(message)
     });
 }
-
-export {getMessages, addMessage}
+*/
+export {getHomeworks}

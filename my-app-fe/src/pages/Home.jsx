@@ -1,8 +1,10 @@
-import { useState, useRef } from 'react';
-import { addMessage } from '../services/messagesService'
+import { useState, useEffect } from 'react';
+//import { addMessage } from '../services/homeworkService'
+import {HomeworkList} from '../components/HomeworkList'
+import { getHomeworks } from '../services/homeworkService';
 
 
-function THome() {
+/*function THome() {
   const [homeworks, setHomeworks] = useState([]);
   const [assignmentDate, setAssignmentDate] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -146,17 +148,42 @@ function THome() {
       ))}
     </div>
   );
-}
+}*/
+
 
 function Home() {
-  const homeworks = ["a", "b"];
+  //const homeworks = ["a", "b"];
+  const [homeworks, setHomeworks] = useState("");
   let handleSearch = (e) => {
     e.preventDefault();
     setSearchQuery("");
   }
+  useEffect(() => {
+    const fetchHomeworks = () => {
+        getHomeworks()
+            .then((homeworks) => {
+                setMessages(homeworks);
+                props.setError('');
+            })
+            .catch((error) => {
+                console.log(error.message);
+                props.setError(error.message);
+                setMessages([]);
+                if (error.message === 'Not authenticated') {
+                    props.setAuthStatus(false);
+                    navigate("/");
+                }
+            })
+    };
+    fetchMessages();
+    //const fetchMessagesInterval = setInterval(fetchMessages, 10000);
+    //return () => clearInterval(fetchMessagesInterval);
+    
+}, []);
+
   const [searchQuery, setSearchQuery] = useState("");
   return (
-    <div className="hws">
+    /*<div className="hws">
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -168,8 +195,13 @@ function Home() {
         <button type="submit" className="search-button">Search</button>
       </form>
       {homeworks.map((hw) => (hw.toLowerCase().startsWith(searchQuery) && hw + " "))}
-    </div>
+    </div>*/
+    <>           
+            <HomeworkList homeworks={homeworks}></HomeworkList>
+        </>
+
+
   )
 }
 
-export { THome, Home };
+export { Home };

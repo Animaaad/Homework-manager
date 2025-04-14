@@ -1,9 +1,9 @@
 exports.config = {
     db: {
-        user: 'bob',
+        user: 'postgres',
         host: 'localhost',
-        database: 'hw-manager',
-        password: 'qwerty',
-        port: '5000'
+        database: 'myapp',
+        password: 'yhopkq12',
+        port: '5432'
     }
 }

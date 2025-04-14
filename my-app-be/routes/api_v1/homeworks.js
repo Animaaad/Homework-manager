@@ -1,18 +1,19 @@
-const { addMessage } = require('../../models/messages.js');
+//const { addMessage } = require('../../models/messages.js');
 var express = require('express');
-const { getMessages } = require('../../models/messages.js');
+const { getHomeworks } = require('../../models/homeworks.js');
+
 //const messages = ["lol", "ahahaha"];  sample data
 var router = express.Router();
 
 router.get('/', function (req, res, next) {
-    getMessages().then((messages) => {
-        res.json(messages.rows)
+    getHomeworks().then((homeworks) => {
+        res.json(homeworks.rows)
     }).catch((err) => {
         console.log(err); res.status(500)
     })
 });
 
-router.post('/', function (req, res, next) {
+/*router.post('/', function (req, res, next) {
     addMessage(req.body).then(
         (r) => res.status(200)
     ).catch(
@@ -21,6 +22,6 @@ router.post('/', function (req, res, next) {
             res.status(500);
         }
     );
-});
+});*/
 
-module.exports = router; // ESM: exports
+module.exports = router;

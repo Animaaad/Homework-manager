@@ -1,7 +1,7 @@
 import ToLogin from "../components/ToLogin";
 import ToRegistration from '../components/ToRegistration'
 import ToTLogin from "../components/ToTLogin";
-import {getMessages} from '../services/messagesService'
+//import {getMessages} from '../services/homeworkService'
 import { useEffect, useState } from 'react';
 
 function FirstPage() {
