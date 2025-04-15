@@ -9,7 +9,7 @@ const pool = new Pool({
     port: config.db.port,
 });
 exports.getHomeworks = function () {
-    console.log("select *")
+    console.log("selecttt")
     return pool.query(`select * from public.homeworks h`);
 };
 /*exports.addMessage = function (message) {

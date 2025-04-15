@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 //import { addMessage } from '../services/homeworkService'
-import {HomeworkList} from '../components/HomeworkList'
+import { HomeworkList } from '../components/HomeworkList'
 import { getHomeworks } from '../services/homeworkService';
+import { Link, useNavigate } from "react-router-dom";
 
 
-/*function THome() {
+function THome() {
   const [homeworks, setHomeworks] = useState([]);
   const [assignmentDate, setAssignmentDate] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -22,7 +23,7 @@ import { getHomeworks } from '../services/homeworkService';
 
   const handleAddHomework = () => {
     const id = Date.now(); // Unique ID
-    setHomeworks([...homeworks, { id, showInput: false, showDates: false, showTitle : false, title: '', text2: '', }]);
+    setHomeworks([...homeworks, { id, showInput: false, showDates: false, showTitle: false, title: '', text2: '', }]);
   };
 
   const handleToggleInput = (id) => {
@@ -74,7 +75,7 @@ import { getHomeworks } from '../services/homeworkService';
         <div key={hw.id} className="add-hws">
 
           <div className="features">
-          <button
+            <button
               onClick={() => handleToggleTitle(hw.id)}
               className="toggle-title"
             >
@@ -144,46 +145,48 @@ import { getHomeworks } from '../services/homeworkService';
             />
           )}
         </div>
-        
+
       ))}
     </div>
   );
-}*/
+}
 
 
 function Home() {
+  
   //const homeworks = ["a", "b"];
-  const [homeworks, setHomeworks] = useState("");
+  const [homeworkss, setHomeworks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
   let handleSearch = (e) => {
     e.preventDefault();
     setSearchQuery("");
   }
+  
   useEffect(() => {
-    const fetchHomeworks = () => {
-        getHomeworks()
-            .then((homeworks) => {
-                setMessages(homeworks);
-                props.setError('');
-            })
-            .catch((error) => {
-                console.log(error.message);
-                props.setError(error.message);
-                setMessages([]);
-                if (error.message === 'Not authenticated') {
-                    props.setAuthStatus(false);
-                    navigate("/");
-                }
-            })
-    };
-    fetchMessages();
-    //const fetchMessagesInterval = setInterval(fetchMessages, 10000);
-    //return () => clearInterval(fetchMessagesInterval);
     
-}, []);
-
-  const [searchQuery, setSearchQuery] = useState("");
+    getHomeworks()
+      .then((homeworks) => {
+        console.log(homeworks)
+        setHomeworks(homeworks);
+        //props.setError('');
+      })
+      .catch((error) => {
+        console.log(error.message);
+        //props.setError(error.message);
+        setHomeworks([]);
+        if (error.message === 'Not authenticated') {
+          //props.setAuthStatus(false);
+          navigate("/");
+        }
+      })}, []);
+    //const fetchMessagesInterval = setInterval(fetchMessages, 100000);
+    //return () => clearInterval(fetchMessagesInterval);
+  
+    
+  
   return (
-    /*<div className="hws">
+    <div className="hws">
       <form onSubmit={handleSearch}>
         <input
           type="text"
@@ -194,14 +197,11 @@ function Home() {
         />
         <button type="submit" className="search-button">Search</button>
       </form>
-      {homeworks.map((hw) => (hw.toLowerCase().startsWith(searchQuery) && hw + " "))}
-    </div>*/
-    <>           
-            <HomeworkList homeworks={homeworks}></HomeworkList>
-        </>
-
-
+      {homeworkss.map((hw) => (hw.text.toLowerCase().startsWith(searchQuery) && hw.text + " "))}
+      
+      {/*<HomeworkList homeworks={homeworkss}></HomeworkList>*/}
+    </div>
   )
 }
 
-export { Home };
+export { Home, THome };

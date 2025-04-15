@@ -5,19 +5,19 @@ function Homework(props) {
             <div className="row mb-3 mt-3">
                 <div className="col-sm-1">
                     <div className="py-1">
-                        {props.message.id}
+                        {props.homework.id}
                     </div>
                 </div>
                 <div className="col-sm-1">
                     <div className="py-1">
-                        {props.message.user_id}
+                        {props.homework.user_id}
                     </div>
                 </div>
             </div>
             <div className="row mb-3 mt-3">
                 <div className="col-sm">
                     <div className="py-2">
-                        {props.message.text}
+                        {props.homework.text}
                     </div>
                 </div>
             </div>

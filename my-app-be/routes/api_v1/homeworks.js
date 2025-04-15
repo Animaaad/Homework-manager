@@ -7,6 +7,7 @@ var router = express.Router();
 
 router.get('/', function (req, res, next) {
     getHomeworks().then((homeworks) => {
+        console.log("ayaya");
         res.json(homeworks.rows)
     }).catch((err) => {
         console.log(err); res.status(500)
