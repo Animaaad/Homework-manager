@@ -1,8 +1,7 @@
 
 function getHomeworks() {
-    console.log("oyoyoayaya");
+    
     return fetch('api/v1/homeworks').then( // promise is resolved
-        
         (response) => {
             if (!response.ok) { // HTTP status code NOT between 200-299
                 throw new Error("Error getting messages");
@@ -18,14 +17,25 @@ function getHomeworks() {
         });
 }
 
-/*function addMessage(message) {
-    return fetch("http://localhost:3001/api/v1/messages", {
+function addHomework(homework) {
+    console.log("addhw");
+    return fetch("api/v1/homeworks", {
         method: "POST",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(message)
+        body: JSON.stringify(homework)
+    }).then((response) => {  // promise is resolved
+        if (!response.ok) {
+            // "unauthorized" or "unauthenticated" HTTP status
+            if (response.status === 401 || response.status === 403) {
+                throw new Error("Not authenticated");
+            }
+            // other error HTTP status
+            throw new Error("Error adding new message");
+        }
     });
 }
-*/
-export {getHomeworks}
+
+export {getHomeworks, addHomework}

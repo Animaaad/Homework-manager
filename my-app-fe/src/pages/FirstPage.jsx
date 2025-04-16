@@ -1,6 +1,5 @@
 import ToLogin from "../components/ToLogin";
 import ToRegistration from '../components/ToRegistration'
-import ToTLogin from "../components/ToTLogin";
 //import {getMessages} from '../services/homeworkService'
 import { useEffect, useState } from 'react';
 
@@ -26,9 +25,6 @@ function FirstPage() {
             </div>
             <div className="firstPage">
                 <ToLogin />
-            </div>
-            <div className="firstPage">
-                <ToTLogin />
             </div>
             <div>
                 <h1>{messages}</h1>

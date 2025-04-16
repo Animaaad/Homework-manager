@@ -8,11 +8,12 @@ const pool = new Pool({
     password: config.db.password,
     port: config.db.port,
 });
+
 exports.getHomeworks = function () {
-    console.log("selecttt")
     return pool.query(`select * from public.homeworks h`);
 };
-/*exports.addMessage = function (message) {
-    return pool.query("insert into public.homeworks(id, user_id, text) values($1, $2, $3)",
-        [message.id, message.user_id, message.text]);
-};*/
+
+exports.addHomework = function (homework) {
+    return pool.query("insert into public.homeworks(id, title, text, assignment_day, due_date) values($1, $2, $3, $4, $5)",
+        [homework.id, homework.title, homework.text, homework.assignment_date, homework.due_date]);
+};

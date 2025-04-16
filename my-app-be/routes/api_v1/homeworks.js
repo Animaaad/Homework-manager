@@ -1,4 +1,4 @@
-//const { addMessage } = require('../../models/messages.js');
+const { addHomework } = require('../../models/homeworks.js');
 var express = require('express');
 const { getHomeworks } = require('../../models/homeworks.js');
 
@@ -14,15 +14,17 @@ router.get('/', function (req, res, next) {
     })
 });
 
-/*router.post('/', function (req, res, next) {
-    addMessage(req.body).then(
+router.post('/', function (req, res, next) {
+    console.log("post");
+    addHomework(req.body).then(
         (r) => res.status(200)
     ).catch(
         (e) => {
+            console.log("what")
             console.log(e);
             res.status(500);
         }
     );
-});*/
+});
 
 module.exports = router;

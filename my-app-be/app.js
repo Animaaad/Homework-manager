@@ -9,8 +9,8 @@ var app = express();
 var pool = require('./config/db');
 
 var homeworksRouter = require('./routes/api_v1/homeworks'); // ESM: import
-const cors = require('cors');
-app.use(cors());
+//const cors = require('cors');
+//app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

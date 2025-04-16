@@ -1,12 +1,14 @@
 CREATE TABLE "public"."users" (
     "id" varchar(100) NOT NULL,
+    
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "public"."homeworks" (
     "id" varchar(100) NOT NULL,
     "user_id" varchar(100) NOT NULL,
-    "text" text NOT NULL,
+    "title" text NOT NULL,
+     
     PRIMARY KEY ("id")
 );
 
