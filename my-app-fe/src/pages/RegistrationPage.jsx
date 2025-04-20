@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import {addUser} from '../services/authService'
 
 function RegistrationPage() {
 
@@ -11,7 +12,17 @@ function RegistrationPage() {
     const navigate = useNavigate();
     const handleSubm = (e) => {
         e.preventDefault()
-        navigate('/home');
+        addUser({
+            "id": crypto.randomUUID(),
+            "username": username,
+            "password": password,
+            "first_name": firstName,
+            "last_name": lastName
+        })
+            .catch((error) => {
+                console.log(error.message);
+            })
+        navigate('/');
     };
 
     return (

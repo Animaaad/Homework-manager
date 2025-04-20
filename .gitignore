@@ -1,1 +1,2 @@
-/my-app-be/config.secrets
+/my-app-be/config.secrets.js
+.env

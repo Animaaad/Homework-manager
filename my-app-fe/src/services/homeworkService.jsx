@@ -38,4 +38,25 @@ function addHomework(homework) {
     });
 }
 
-export {getHomeworks, addHomework}
+function updateHomework(id) {
+    console.log(id)
+    return fetch("api/v1/publish", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id })
+    }).then((response) => { // promise is resolved
+        if (!response.ok) {
+            // "unauthorized" or "unauthenticated" HTTP status
+            if (response.status === 401 || response.status === 403) {
+                throw new Error("Not authenticated");
+            }
+            // other error HTTP status
+            throw new Error("Error adding new message");
+        }
+    });
+}
+
+export {getHomeworks, addHomework, updateHomework}

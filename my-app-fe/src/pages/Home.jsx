@@ -49,8 +49,13 @@ function Home() {
         />
         <button type="submit" className="search-button">Search</button>
       </form>
-      {homeworkss.map((hw) =>
-        (hw.title.toLowerCase().startsWith(searchQuery) && hw.title + " " + hw.text))}
+      {homeworkss.map((hw, index) =>
+        hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
+          <div key={index}>
+            {hw.title} {hw.text}
+          </div>
+        )
+      )}
 
       {/*<HomeworkList homeworks={homeworkss}></HomeworkList>*/}
     </div>

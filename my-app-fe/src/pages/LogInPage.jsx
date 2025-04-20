@@ -1,23 +1,40 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { login } from '../services/authService';
 
-function LogInPage() {
-    const mockUsers = {
-        alice: 'pass123',
-        bob: 'qwerty',
-    };
 
+function LogInPage(props) {
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const handleSubm = (e) => {
-        const userPassword = mockUsers[username.toLowerCase()];
-        if (userPassword && password === userPassword) {
-            navigate('/home');
-        } else {
-            setError('Invalid username or password.');
+        
+        // prevent page reload
+        e.preventDefault();
+        // basic validation  
+        if (username === '' || password === '') {
+            props.setError('Username and password are required!');
+            return;
         }
+        console.log("kkk")
+        login(username, password)
+            .then((data) => {
+                console.log("zzz" + data.user.id + "zzz")
+                props.setAuthStatus(true);
+                
+                if (data.user.is_teacher) {
+                   navigate('/thome');
+                } else {
+                    navigate('/home')
+                }
+            })
+            .catch((error) => {
+                console.log(error.message);
+                props.setError(error.message)
+            });
+        // reset error message if the form is valid
+        props.setError('');
     };
 
     return (
@@ -29,7 +46,6 @@ function LogInPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
-                    
                 <input
                     type="password"
                     placeholder="Password"
