@@ -17,8 +17,8 @@ var homeworksRouter = require('./routes/api_v1/homeworks'); // ESM: import
 const cors = require('cors');
 app.use(cors());
 app.use(cors({
-  origin: "http://localhost:5173",  // Frontend URL
-  credentials: true  // Allow sending cookies
+  origin: "https://homework-manager-oto1.onrender.com",
+  credentials: true
 }));
 app.use(logger('dev'));
 app.use(express.json());
@@ -68,7 +68,7 @@ app.use('/api/v1/auth', authRouter);
     });
 });*/
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
