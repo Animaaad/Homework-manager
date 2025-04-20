@@ -8,8 +8,8 @@ function login(username, password) {
     body: JSON.stringify({ username, password }),
     credentials: "include"
   })
-    .then((response) => { 
-      
+    .then((response) => {
+      console.log(response)
       if (!response.ok) {
         // invalid password or user does not exist
         if (response.status === 401) {

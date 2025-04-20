@@ -47,7 +47,7 @@ app.use(
       name: config.session.cookieName,
       cookie: {
           secure: process.env.STATUS === 'production',
-          httpOnly: true,
+          //httpOnly: true,
           sameSite: process.env.STATUS === 'production'?'none':'lax',
           maxAge: 1000 * 60 * 60 * 24 }            
            
