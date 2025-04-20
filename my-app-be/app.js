@@ -68,9 +68,10 @@ app.use('/api/v1/auth', authRouter);
     });
 });*/
 
-app.listen(3001, () => {
-  console.log(`Server running on http://localhost:${3001}`);
+/*const port = process.env.PORT || 3000
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
-
+*/
 module.exports = app;
 
