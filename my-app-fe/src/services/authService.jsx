@@ -1,8 +1,8 @@
-const API_URL = process.env.REACT_APP_API_URL || "";
+//const API_URL = process.env.REACT_APP_API_URL || "";
 
 function login(username, password) {
   console.log("eeeee")
-  return fetch(`${API_URL}/api/v1/auth/login`, {
+  return fetch(`$/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
@@ -23,7 +23,7 @@ function login(username, password) {
 
 function logout() {
   console.log("ooo")
-  return fetch(`${API_URL}/api/v1/auth/logout`, { method: "DELETE", credentials: "include" })
+  return fetch(`/api/v1/auth/logout`, { method: "DELETE", credentials: "include" })
     .then((response) => {  // promise is resolved
       if (!response.ok) {
         if (response.status === 400) {
@@ -36,7 +36,7 @@ function logout() {
 
 function addUser(user) {
   console.log("ffff")
-  return fetch(`${API_URL}/api/v1/auth/register`, {
+  return fetch(`/api/v1/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -57,7 +57,7 @@ function addUser(user) {
 }
 
 export function getCurrentUser() {
-  return fetch(`${API_URL}/api/v1/auth/me`, {
+  return fetch(`/api/v1/auth/me`, {
     method: "GET",
     credentials: "include"
   }).then((res) => {
