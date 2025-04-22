@@ -68,4 +68,4 @@ export function getCurrentUser() {
   });
 }
 
-export { login, logout, addUser };
+export { login, logout, addUser, getCurrentUser };
