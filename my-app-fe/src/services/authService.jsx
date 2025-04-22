@@ -36,7 +36,7 @@ function logout() {
 
 function addUser(user) {
   console.log("ffff")
-  return fetch(`${API_URL}/api/v1/auth/register`, {
+  return fetch(`https://homework-manager-oto1.onrender.com/api/v1/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
