@@ -57,7 +57,7 @@ function addUser(user) {
 }
 
 export function getCurrentUser() {
-  return fetch("/api/v1/auth/me", {
+  return fetch(`${API_URL}/api/v1/auth/me`, {
     method: "GET",
     credentials: "include"
   }).then((res) => {
