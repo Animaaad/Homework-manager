@@ -17,15 +17,15 @@ var homeworksRouter = require('./routes/api_v1/homeworks'); // ESM: import
 const cors = require('cors');
 app.use(cors());
 app.use(cors({
-  origin: "https://homework-manager-oto1.onrender.com",
+  origin: "https://homework-manager-fe.onrender.com",
   credentials: true
 }));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', indexRouter);
+
+
 
 if (process.env.STATUS === 'production') {
   // trust proxy needed for secure cookie to work on render.com
@@ -53,9 +53,11 @@ app.use(
            
   })
 );
-
+app.use('/', indexRouter);
 app.use('/api/v1', homeworksRouter);
 app.use('/api/v1/auth', authRouter);
+
+app.use(express.static(path.join(__dirname, 'public')));
 /*app.get('/api/v1/homeworks', (req, res) => {
   pool
     .query('SELECT * FROM homeworks')

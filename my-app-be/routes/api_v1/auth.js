@@ -7,7 +7,7 @@ var pool = require('../../config/db.js');
 
 router.post("/register", (req, res) => {
 
-    console.log("ssss");
+    console.log("kkk");
     getUsers().then((users) => {
         users.rows.map((user) => {
             if (user.username === req.body.username) {
