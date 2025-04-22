@@ -2,7 +2,7 @@ const API_URL = process.env.REACT_APP_API_URL || "";
 
 function getHomeworks() {
     
-    return fetch(`${API_URL}api/v1/homeworks`).then( // promise is resolved
+    return fetch(`${API_URL}/api/v1/homeworks`).then( // promise is resolved
         (response) => {
             if (!response.ok) { // HTTP status code NOT between 200-299
                 throw new Error("Error getting messages");
