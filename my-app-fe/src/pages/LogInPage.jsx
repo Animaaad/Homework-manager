@@ -17,7 +17,7 @@ function LogInPage(props) {
             props.setError('Username and password are required!');
             return;
         }
-        console.log("kkk")
+        console.log("www")
         login(username, password)
             .then((data) => {
                 console.log("zzz" + data.user.id + "zzz")
