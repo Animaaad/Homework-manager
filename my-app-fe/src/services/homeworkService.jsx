@@ -20,7 +20,7 @@ function getHomeworks() {
 
 function addHomework(homework) {
     console.log("addhw");
-    return fetch(`${API_URL}/api/v1/homeworks`, {
+    return fetch(`/api/v1/homeworks`, {
         method: "POST",
         credentials: "include",
         headers: {
