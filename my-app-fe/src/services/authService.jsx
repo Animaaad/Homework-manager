@@ -48,10 +48,7 @@ function addUser(user) {
       }
       console.log("Response ok");
       return response.json();
-    }).catch((error) => { // promise is rejected
-      // Better way would be to throw error here and let the
-      // client handle (e.g. show error message)
-      // Returning empty array for simplicity only!
+    }).catch((error) => {
       console.log(error);
     });
 }

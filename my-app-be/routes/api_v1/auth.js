@@ -9,13 +9,11 @@ router.post("/register", (req, res) => {
 
     console.log("kkk");
     getUsers().then((users) => {
-        users.rows.map((user) => {
-            if (user.username === req.body.username) {
-                console.log("This username already exists");
-                return res.status(401).end();
-            }
-        })
-        console.log("aaaaa");
+        const userExists = users.rows.find(user => user.username === req.body.username);
+        if (userExists) {
+            console.log("This username already exists");
+            return res.status(401).json({ error: "Username already exists" });
+        }
     }).catch((err) => {
         console.log(err); res.status(500)
     })
@@ -41,6 +39,7 @@ router.post("/register", (req, res) => {
             res.status(500);
         }
     );
+    return res.status(200);
 });
 
 router.post("/login", (req, res) => {
@@ -105,24 +104,24 @@ router.delete("/logout", (req, res) => {
 router.get('/me', async (req, res) => {
     const userId = req.session.userId;
     console.log(userId)
-    
+
     if (!userId) {
-      return res.status(401).json({ error: 'Not authenticated' });
+        return res.status(401).json({ error: 'Not authenticated' });
     }
-  
+
     try {
-      const result = await pool.query('SELECT id, username, is_teacher FROM users WHERE id = $1', [userId]);
-      const user = result.rows[0];
-  
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      res.json({ user });
+        const result = await pool.query('SELECT id, username, is_teacher FROM users WHERE id = $1', [userId]);
+        const user = result.rows[0];
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ user });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Server error' });
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
     }
-  });
+});
 
 module.exports = router;

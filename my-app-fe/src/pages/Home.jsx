@@ -52,7 +52,7 @@ function Home() {
       {homeworkss.map((hw, index) =>
         hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
           <div key={index}>
-            {hw.title} {hw.text}
+            {hw.title} {hw.description}
           </div>
         )
       )}

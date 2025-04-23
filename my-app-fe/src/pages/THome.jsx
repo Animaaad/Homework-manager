@@ -46,7 +46,7 @@ function THome(props) {
             addHomework({
                 "id": hw.id,
                 "title": hw.title,
-                "text": hw.text,
+                "description": hw.description,
                 "assignment_date": null,
                 "due_date": null,
                 "is_public": true
@@ -68,7 +68,7 @@ function THome(props) {
         addHomework({
             "id": hw.id,
             "title": hw.title,
-            "text": hw.text,
+            "description": hw.description,
             "assignment_date": null,
             "due_date": null,
             "is_public": false
@@ -82,12 +82,12 @@ function THome(props) {
         const id = Date.now(); // Unique ID
         setHomeworks([...homeworks, {
             id, showInput: false, showDates: false,
-            showTitle: false, title: '', text: '',
+            showTitle: false, title: '', description: '',
             is_saved: false, is_public: false
         }]);
     };
 
-    const handleToggleInput = (id) => {
+    const handleToggleDescription = (id) => {
         setHomeworks(homeworks.map(hw =>
             hw.id === id ? { ...hw, showInput: !hw.showInput } : hw
         ));
@@ -111,7 +111,7 @@ function THome(props) {
     const handleInputChange = (id, newText) => {
         setHomeworks(homeworks.map(hw =>
             hw.id === id
-                ? { ...hw, text: newText }
+                ? { ...hw, description: newText }
                 : hw
         ));
     };
@@ -142,10 +142,10 @@ function THome(props) {
                             Toggle Title
                         </button>
                         <button
-                            onClick={() => handleToggleInput(hw.id)}
+                            onClick={() => handleToggleDescription(hw.id)}
                             className="toggle-input"
                         >
-                            Toggle Input
+                            Toggle Descrition
                         </button>
                         <button
                             onClick={() => handleToggleDates(hw.id)}

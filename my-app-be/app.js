@@ -49,7 +49,7 @@ app.use(
           secure: process.env.STATUS === 'production',
           //httpOnly: true,
           sameSite: process.env.STATUS === 'production'?'none':'lax',
-          maxAge: 1000 * 60 * 60 * 24 }            
+          maxAge: 1000 * 60 * 60 * 24 }
            
   })
 );
