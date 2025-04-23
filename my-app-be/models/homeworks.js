@@ -1,5 +1,5 @@
 //require('dotenv').config()
-var { pool } = require('../config/db.js');
+var pool = require('../config/db.js');
 
 exports.getHomeworks = function (userId) {
     return pool.query(`
