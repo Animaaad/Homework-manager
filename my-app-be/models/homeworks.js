@@ -1,13 +1,5 @@
-const { Pool } = require('pg');
 //require('dotenv').config()
-const { config } = require('../config/db.js');
-const pool = new Pool({
-    user: config.db.user,
-    host: config.db.hosts,
-    database: config.db.database,
-    password: config.db.password,
-    port: config.db.port,
-});
+const { pool } = require('../config/db.js');
 
 exports.getHomeworks = function (userId) {
     return pool.query(`
