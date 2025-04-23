@@ -1,9 +1,9 @@
 const { Pool } = require('pg');
 //require('dotenv').config()
-const { config } = require('../config.secrets')
+const { config } = require('../config/db.js');
 const pool = new Pool({
     user: config.db.user,
-    host: config.db.host,
+    host: config.db.hosts,
     database: config.db.database,
     password: config.db.password,
     port: config.db.port,
