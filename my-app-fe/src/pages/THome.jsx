@@ -47,8 +47,8 @@ function THome(props) {
                 "id": hw.id,
                 "title": hw.title,
                 "description": hw.description,
-                "assignment_date": null,
-                "due_date": null,
+                "assignment_date": hw.assign_date,
+                "due_date": hw.due_date,
                 "is_public": true
             })
                 .catch((error) => {
@@ -69,8 +69,8 @@ function THome(props) {
             "id": hw.id,
             "title": hw.title,
             "description": hw.description,
-            "assignment_date": null,
-            "due_date": null,
+            "assignment_date": hw.due_date,
+            "due_date": hw.assign_date,
             "is_public": false
         })
             .catch((error) => {
@@ -83,7 +83,8 @@ function THome(props) {
         setHomeworks([...homeworks, {
             id, showInput: false, showDates: false,
             showTitle: false, title: '', description: '',
-            is_saved: false, is_public: false
+            is_saved: false, is_public: false, due_date: '',
+            assign_date: ''
         }]);
     };
 
@@ -103,6 +104,18 @@ function THome(props) {
         setHomeworks(homeworks.map(hw =>
             hw.id === id ? { ...hw, showDates: !hw.showDates } : hw))
     }
+
+    const handleDueDateChange = (id, value) => {
+        setHomeworks(homeworks.map(hw =>
+            hw.id === id ? { ...hw, due_date: value } : hw
+        ));
+    };
+    
+    const handleAssignDateChange = (id, value) => {
+        setHomeworks(homeworks.map(hw =>
+            hw.id === id ? { ...hw, assign_date: value } : hw
+        ));
+    };
 
     const handleDelete = (id) => {
         setHomeworks(homeworks.filter(hw => hw.id !== id));
@@ -171,16 +184,16 @@ function THome(props) {
                                     Assignment Date: &nbsp;
                                     <input
                                         type="datetime-local"
-                                        value={assignmentDate}
-                                        onChange={(e) => setAssignmentDate(e.target.value)}
+                                        value={hw.assign_date}
+                                        onChange={(e) => handleAssignDateChange(hw.id, e.target.value)}
                                     />
                                 </label>
                                 <label>
                                     Due Date: &nbsp;
                                     <input
                                         type="datetime-local"
-                                        value={dueDate}
-                                        onChange={(e) => setDueDate(e.target.value)}
+                                        value={hw.due_date}
+                                        onChange={(e) => handleDueDateChange(hw.id, e.target.value)}
                                     />
                                 </label>
                             </div>
@@ -202,7 +215,7 @@ function THome(props) {
                         <input
                             id="message-text"
                             type="text"
-                            value={hw.text}
+                            value={hw.description}
                             onChange={(e) => handleInputChange(hw.id, e.target.value)}
                             placeholder="Type something..."
                             className="input"
@@ -225,7 +238,7 @@ function THome(props) {
                 {displayedHomeworks.map((hw, index) =>
                     hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
                         <div key={index}>
-                            {hw.title} {hw.description}
+                            {hw.title} {hw.description} {hw.assignment_day} {hw.due_date}
                         </div>
                     )
                 )}

@@ -17,7 +17,7 @@ function Homework(props) {
             <div className="row mb-3 mt-3">
                 <div className="col-sm">
                     <div className="py-2">
-                        {props.homework.text}
+                        {props.homework.description}
                     </div>
                 </div>
             </div>

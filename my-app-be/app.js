@@ -15,11 +15,11 @@ const { config } = require('./config/config.js')
 
 var homeworksRouter = require('./routes/api_v1/homeworks'); // ESM: import
 const cors = require('cors');
-app.use(cors());
+/*app.use(cors());
 app.use(cors({
   origin: "https://homework-manager-fe.onrender.com",
   credentials: true
-}));
+}));*/
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
