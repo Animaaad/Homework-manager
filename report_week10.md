@@ -4,7 +4,7 @@
 - Repository link: [Animaaad/Homework-manager]
 
 # Info about the reported versioin:  
-- Tag: week9
+- Tag: week10
 - Time period: 10. week, 21.4. - 27.4.2025
 
 # Plan: 
