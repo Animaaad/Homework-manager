@@ -39,15 +39,15 @@ function addHomework(homework) {
     });
 }
 
-function updateHomework(id) {
+function updateHomework(id, due_date) {
     console.log(id)
-    return fetch(`/api/v1/publish`, {
+    return fetch(`/api/v1/homeworks/publish`, {
         method: "POST",
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ id, due_date })
     }).then((response) => { // promise is resolved
         if (!response.ok) {
             // "unauthorized" or "unauthenticated" HTTP status
@@ -60,4 +60,65 @@ function updateHomework(id) {
     });
 }
 
-export {getHomeworks, addHomework, updateHomework}
+function addStudentHomework (hw) {
+    console.log(hw)
+    return fetch(`/api/v1/homeworks/student`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(hw)
+    }).then((response) => { // promise is resolved
+        if (!response.ok) {
+            // "unauthorized" or "unauthenticated" HTTP status
+            if (response.status === 401 || response.status === 403) {
+                throw new Error("Not authenticated");
+            }
+            // other error HTTP status
+            throw new Error("Error adding new message");
+        }
+    });
+}
+
+function getStudentHomeworks() {
+    return fetch(`/api/v1/homeworks/student`).then( // promise is resolved
+        (response) => {
+            if (!response.ok) { // HTTP status code NOT between 200-299
+                throw new Error("Error getting messages");
+            }
+            console.log("hahaha"); 
+            return response.json();
+        }).catch((error) => { // promise is rejected
+            // Better way would be to throw error here and let the
+            // client handle (e.g. show error message)
+            // Returning empty array for simplicity only!
+            console.log("Error getting messagesayaya");
+            return [];
+        });
+}
+
+
+function editNote (hw) {
+    console.log(hw)
+    return fetch(`/api/v1/homeworks/student/update`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(hw)
+    }).then((response) => { // promise is resolved
+        if (!response.ok) {
+            // "unauthorized" or "unauthenticated" HTTP status
+            if (response.status === 401 || response.status === 403) {
+                throw new Error("Not authenticated");
+            }
+            // other error HTTP status
+            throw new Error("Error adding new message");
+        }
+    });
+}
+
+export {getHomeworks, addHomework, updateHomework, 
+    addStudentHomework, getStudentHomeworks, editNote}

@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { login } from '../services/authService';
+import { login, logout } from '../services/authService';
 
 
 function LogInPage(props) {
@@ -8,8 +8,14 @@ function LogInPage(props) {
     const [error, setError] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        logout()
+        props.setAuthStatus(false);
+    }, []);
+
     const handleSubm = (e) => {
-        
+
         // prevent page reload
         e.preventDefault();
         // basic validation  
@@ -22,9 +28,9 @@ function LogInPage(props) {
             .then((data) => {
                 console.log("zzz" + data.user.id + "zzz")
                 props.setAuthStatus(true);
-                
+
                 if (data.user.is_teacher) {
-                   navigate('/thome');
+                    navigate('/thome');
                 } else {
                     navigate('/home')
                 }

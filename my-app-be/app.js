@@ -54,7 +54,7 @@ app.use(
   })
 );
 app.use('/', indexRouter);
-app.use('/api/v1', homeworksRouter);
+app.use('/api/v1/homeworks', homeworksRouter);
 app.use('/api/v1/auth', authRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));

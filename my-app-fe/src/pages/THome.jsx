@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { addHomework, getHomeworks, updateHomework } from '../services/homeworkService'
-
+import { Homeworks } from '../components/Homeworks';
+import { SavedHomeworks } from '../components/SavedHomeworks';
+import { PublishedHomeworks } from '../components/PublishedHomeworks';
 function THome(props) {
     const [homeworks, setHomeworks] = useState([]);
-    const [assignmentDate, setAssignmentDate] = useState('');
-    const [dueDate, setDueDate] = useState('');
     const navigate = useNavigate();
 
 
@@ -18,23 +18,7 @@ function THome(props) {
         setSearchQuery("");
     }
 
-    useEffect(() => {
-        getHomeworks()
-            .then((homeworks) => {
-                console.log(homeworks)
-                setDisplayedHomeworks(homeworks);
-                //props.setError('');
-            })
-            .catch((error) => {
-                console.log(error.message);
-                //props.setError(error.message);
-                setDisplayedHomeworks([]);
-                if (error.message === 'Not authenticated') {
-                    //props.setAuthStatus(false);
-                    navigate("/");
-                }
-            })
-    }, []);
+    
 
     function publishNewHomework(hw) {
         console.log(hw.id)
@@ -49,7 +33,8 @@ function THome(props) {
                 "description": hw.description,
                 "assignment_date": hw.assign_date,
                 "due_date": hw.due_date,
-                "is_public": true
+                "is_public": true,
+                //"subject": hw.subject
             })
                 .catch((error) => {
                     console.log(error.message);
@@ -110,7 +95,7 @@ function THome(props) {
             hw.id === id ? { ...hw, due_date: value } : hw
         ));
     };
-    
+
     const handleAssignDateChange = (id, value) => {
         setHomeworks(homeworks.map(hw =>
             hw.id === id ? { ...hw, assign_date: value } : hw
@@ -139,91 +124,8 @@ function THome(props) {
 
     return (
         <div className="add-homeworks">
-            <button
-                onClick={handleAddHomework}
-                className="add-homework"
-            >
-                Add Homework
-            </button>
-            {homeworks.map((hw) => (
-                <div key={hw.id} className="add-hws">
-                    <div className="features">
-                        <button
-                            onClick={() => handleToggleTitle(hw.id)}
-                            className="toggle-title"
-                        >
-                            Toggle Title
-                        </button>
-                        <button
-                            onClick={() => handleToggleDescription(hw.id)}
-                            className="toggle-input"
-                        >
-                            Toggle Descrition
-                        </button>
-                        <button
-                            onClick={() => handleToggleDates(hw.id)}
-                            className="toggle-dates"
-                        >
-                            Toggle Dates
-                        </button>
-                        {!hw.is_public && (<button
-                            onClick={() => handleDelete(hw.id)}
-                            className="delete"
-                        >
-                            ❌
-                        </button>)}
-                        <button className='Publish' onClick={() => publishNewHomework(hw)}>
-                            Publish
-                        </button>
-                        <button className='Publish' onClick={() => saveDraft(hw)}>
-                            Save Draft
-                        </button>
-                        {hw.showDates && (
-                            <div>
-                                <label>
-                                    Assignment Date: &nbsp;
-                                    <input
-                                        type="datetime-local"
-                                        value={hw.assign_date}
-                                        onChange={(e) => handleAssignDateChange(hw.id, e.target.value)}
-                                    />
-                                </label>
-                                <label>
-                                    Due Date: &nbsp;
-                                    <input
-                                        type="datetime-local"
-                                        value={hw.due_date}
-                                        onChange={(e) => handleDueDateChange(hw.id, e.target.value)}
-                                    />
-                                </label>
-                            </div>
-                        )}
-                    </div>
+            <Homeworks></Homeworks>
 
-                    {hw.showTitle && (
-                        <input
-                            id="message-text"
-                            type="text"
-                            value={hw.title}
-                            onChange={(e) => handleTitleChange(hw.id, e.target.value)}
-                            placeholder="Title:..."
-                            className="input"
-                        />
-                    )}
-
-                    {hw.showInput && (
-                        <input
-                            id="message-text"
-                            type="text"
-                            value={hw.description}
-                            onChange={(e) => handleInputChange(hw.id, e.target.value)}
-                            placeholder="Type something..."
-                            className="input"
-                        />
-                    )}
-
-                </div>
-            ))}
             <div className="hws">
                 <form onSubmit={() => handleSearch}>
                     <input
@@ -235,14 +137,17 @@ function THome(props) {
                     />
                     <button type="submit" className="search-button">Search</button>
                 </form>
-                {displayedHomeworks.map((hw, index) =>
+                Drafts:
+                <SavedHomeworks></SavedHomeworks>
+                {displayedHomeworks.map((hw) =>
                     hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
-                        <div key={index}>
-                            {hw.title} {hw.description} {hw.assignment_day} {hw.due_date}
+                        <div key={hw.id}>
+                            {hw.title} {hw.description} {hw.assignment_date} {hw.due_date}
                         </div>
                     )
                 )}
-                {/*<HomeworkList homeworks={homeworkss}></HomeworkList>*/}
+                Published homeworks:
+                <PublishedHomeworks></PublishedHomeworks>
             </div>
         </div>
     );

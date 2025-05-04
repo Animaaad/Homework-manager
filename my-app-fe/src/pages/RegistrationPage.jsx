@@ -22,7 +22,7 @@ function RegistrationPage() {
             .catch((error) => {
                 console.log(error.message);
             })
-        navigate('/');
+        navigate('/login');
     };
 
     return (
