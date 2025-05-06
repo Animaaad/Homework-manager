@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import {addUser} from '../services/authService'
+import { addUser } from '../services/authService'
 
 function RegistrationPage() {
 
@@ -10,6 +10,7 @@ function RegistrationPage() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const navigate = useNavigate();
+
     const handleSubm = (e) => {
         e.preventDefault()
         addUser({
@@ -18,11 +19,17 @@ function RegistrationPage() {
             "password": password,
             "first_name": firstName,
             "last_name": lastName
+        }).then(() => {
+            navigate('/login')
         })
             .catch((error) => {
-                console.log(error.message);
+                if (error.response?.status === 409) {
+                    alert("User already exists");
+                } else {
+                    alert("Something went wrong.");
+                    console.error(error.message);
+                }
             })
-        navigate('/login');
     };
 
     return (

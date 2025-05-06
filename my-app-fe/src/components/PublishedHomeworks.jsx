@@ -42,7 +42,7 @@ function PublishedHomeworks() {
         const newDueDate = new Date(hw.newDate);
         console.log(hw.due_date)
         console.log(newDueDate)
-        if (newDueDate > oldDate) {
+        if (newDueDate >= oldDate) {
             setHomeworks(homeworks.map(hw3 =>
                 hw3.id === hw.id ? { ...hw3, due_date: newDueDate } : hw3
             ));

@@ -5,41 +5,27 @@ const { config } = require('../../config/config.js');
 var router = express.Router();
 var pool = require('../../config/db.js');
 
-router.post("/register", (req, res) => {
-
+router.post("/register", async (req, res) => {
     console.log("kkk");
-    getUsers().then((users) => {
-        const userExists = users.rows.find(user => user.username === req.body.username);
-        if (userExists) {
-            console.log("This username already exists");
-            return res.status(401).json({ error: "Username already exists" });
-        }
-    }).catch((err) => {
-        console.log(err); res.status(500)
-    })
-        .catch(
-            (e) => {
-                console.log("xxxx")
-                console.log(e);
-                res.status(500);
-            }
-        );
     const { id, first_name, last_name, username, password } = req.body;
-    hashPassword(password).then((hashedPassword) => {
-        return pool.query(
+    try {
+        const hashedPassword = await hashPassword(password);
+        await pool.query(
             `INSERT INTO users (id, username, password, first_name, last_name, is_teacher)
-               VALUES ($1, $2, $3, $4, $5, $6)`,
+             VALUES ($1, $2, $3, $4, $5, $6)`,
             [id, username, hashedPassword, first_name, last_name, false]
         );
-    }
-    ).catch(
-        (e) => {
-            console.log("xxxx")
-            console.log(e);
-            res.status(500);
+
+        console.log("User successfully created");
+        res.status(201).json({ message: 'User created' });
+    } catch (err) {
+        if (err.code === '23505') {
+            res.status(409).json({ error: 'User already exists' }); // Conflict
+        } else {
+            console.error("Unexpected error:", err);
+            res.status(500).json({ error: 'Internal server error' });
         }
-    );
-    return res.status(200);
+    }
 });
 
 router.post("/login", (req, res) => {

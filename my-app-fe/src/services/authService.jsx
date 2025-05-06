@@ -35,7 +35,7 @@ function logout() {
 }
 
 function addUser(user) {
-  console.log("ffff")
+  console.log("ffff");
   return fetch(`/api/v1/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -43,13 +43,16 @@ function addUser(user) {
     body: JSON.stringify(user)
   })
     .then((response) => {
-      if (!response.ok) { // HTTP status code NOT between 200-299
-        throw new Error("Error getting messages");
+      if (!response.ok) {
+        // Forward error details to outer catch
+        return response.json().then(err => {
+          const error = new Error(err.error || 'Request failed');
+          error.response = { status: response.status };
+          throw error;
+        });
       }
       console.log("Response ok");
       return response.json();
-    }).catch((error) => {
-      console.log(error);
     });
 }
 

@@ -60,7 +60,7 @@ function LogInPage(props) {
                     className="w-full border p-2 rounded"
                     required
                 />
-                <button type="submit" className="submit-button">
+                <button type="submit" className="btn btn-primary">
                     Submit
                 </button>
                 {error && <p className="text-red-500 mt-2">{error}</p>}

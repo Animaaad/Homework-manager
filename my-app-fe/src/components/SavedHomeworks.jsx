@@ -1,126 +1,158 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { addHomework, getHomeworks, updateHomework } from '../services/homeworkService'
+import { addHomework, getHomeworks, getSubjects, updateHomework, deleteHomework } from '../services/homeworkService';
 
 function SavedHomeworks() {
     const [homeworks, setHomeworks] = useState([]);
     const navigate = useNavigate();
-
     const [searchQuery, setSearchQuery] = useState("");
-
-    let handleSearch = (e) => {
-        e.preventDefault();
-        setSearchQuery("");
-    }
 
     useEffect(() => {
         getHomeworks()
             .then((homeworks) => {
-                console.log(homeworks)
                 setHomeworks(homeworks.filter(hw => hw.is_public === false));
-                //props.setError('');
             })
             .catch((error) => {
                 console.log(error.message);
-                //props.setError(error.message);
                 setHomeworks([]);
                 if (error.message === 'Not authenticated') {
-                    //props.setAuthStatus(false);
                     navigate("/");
                 }
-            })
+            });
     }, []);
 
+
     function publishNewHomework(hw) {
-        console.log(hw.id)
         setHomeworks(homeworks.map(hw2 =>
             hw2.id === hw.id ? { ...hw2, is_saved: true, is_public: true } : hw2
         ));
         if (!hw.is_saved) {
-            console.log("qqqqqq")
             addHomework({
-                "id": hw.id,
-                "title": hw.title,
-                "description": hw.description,
-                "assignment_date": hw.assign_date,
-                "due_date": hw.due_date,
-                "is_public": true,
-                //"subject": hw.subject
-            })
-                .catch((error) => {
-                    console.log(error.message);
-                })
+                id: hw.id,
+                title: hw.title,
+                description: hw.description,
+                assignment_date: hw.assign_date,
+                due_date: hw.due_date,
+                is_public: true,
+                subject: hw.subject
+            }).catch((error) => {
+                console.log(error.message);
+            });
         } else {
-            console.log(hw.id)
-            updateHomework(hw.id)
+            updateHomework(hw.id);
         }
     }
 
     function saveDraft(hw) {
-        console.log(hw)
         setHomeworks(homeworks.map(hw2 =>
             hw2.id === hw.id ? { ...hw2, is_saved: true } : hw2
         ));
-        addHomework({
-            "id": hw.id,
-            "title": hw.title,
-            "description": hw.description,
-            "assignment_date": hw.due_date,
-            "due_date": hw.assign_date,
-            "is_public": false
-        })
-            .catch((error) => {
+        if (!hw.is_saved) {
+            addHomework({
+                id: hw.id,
+                title: hw.title,
+                description: hw.description,
+                assignment_date: hw.assign_date,
+                due_date: hw.due_date,
+                is_public: false,
+                subject: hw.subject
+            }).catch((error) => {
                 console.log(error.message);
-            })
+            });
+        } else {
+            updateHomework(hw.id);
+        }
     }
 
     const handleToggleDescription = (id) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id ? { ...hw, showInput: !hw.showInput } : hw
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, showInput: !hw2.showInput } : hw2
         ));
     };
 
     const handleToggleTitle = (id) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id ? { ...hw, showTitle: !hw.showTitle } : hw
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, showTitle: !hw2.showTitle } : hw2
         ));
     };
 
     const handleToggleDates = (id) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id ? { ...hw, showDates: !hw.showDates } : hw))
-    }
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, showDates: !hw2.showDates } : hw2
+        ));
+    };
 
     const handleDueDateChange = (id, value) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id ? { ...hw, due_date: value } : hw
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, due_date: value } : hw2
         ));
     };
 
     const handleAssignDateChange = (id, value) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id ? { ...hw, assign_date: value } : hw
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, assign_date: value } : hw2
         ));
     };
 
     const handleDelete = (id) => {
-        setHomeworks(homeworks.filter(hw => hw.id !== id));
+        setHomeworks(homeworks.filter(hw2 => hw2.id !== id));
+        deleteHomework({ id });
     };
 
     const handleInputChange = (id, newText) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id
-                ? { ...hw, description: newText }
-                : hw
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, description: newText } : hw2
         ));
     };
 
     const handleTitleChange = (id, newText) => {
-        setHomeworks(homeworks.map(hw =>
-            hw.id === id
-                ? { ...hw, title: newText }
-                : hw
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === id ? { ...hw2, title: newText } : hw2
         ));
+    };
+
+    /*const options = [
+        { code: "2-INF-186/15", name: "Formálne jazyky a automaty (2)" },
+        { code: "2-INF-145/15", name: "Tvorba internetových aplikácií" },
+    ];*/
+
+    const [options, setOptions] = useState([]);
+
+
+
+    useEffect(() => {
+        getSubjects()
+            .then((sjs) => {
+                setOptions(sjs);
+            })
+            .catch((error) => {
+                console.log(error.message);
+                setHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    navigate("/");
+                }
+            });
+    }, []);
+
+    const toggleSubject = (hw) => {
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === hw.id
+                ? { ...hw2, showSubject: !hw2.showSubject }
+                : hw2
+        ));
+    };
+
+    const handleSelect = (hw, option) => {
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === hw.id
+                ? { ...hw2, subject: option, showSubject: false }
+                : hw2
+        ));
+    };
+
+    const getSubjectLabel = (code) => {
+        const match = options.find(opt => opt.code === code);
+        return match ? `Subject: ${match.name}` : "Select a subject";
     };
 
     return (
@@ -128,36 +160,51 @@ function SavedHomeworks() {
             {homeworks.map((hw) => (
                 <div key={hw.id} className="add-hws">
                     <div className="features">
-                        <button
-                            onClick={() => handleToggleTitle(hw.id)}
-                            className="toggle-title"
-                        >
+                        <button onClick={() => handleToggleTitle(hw.id)} className="toggle-title">
                             Toggle Title
                         </button>
+
                         <button
-                            onClick={() => handleToggleDescription(hw.id)}
-                            className="toggle-input"
+                            onClick={() => toggleSubject(hw)}
+                            className="w-full border rounded px-4 py-2 bg-white shadow text-left"
                         >
+                            {getSubjectLabel(hw.subject?.code)}
+                        </button>
+
+                        {hw.showSubject && (
+                            <ul className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto border bg-white shadow rounded">
+                                {options.map((option) => (
+                                    <li
+                                        key={option.code}
+                                        onClick={() => handleSelect(hw, option)}
+                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    >
+                                        {option.code} - {option.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
+                        <button onClick={() => handleToggleDescription(hw.id)} className="toggle-input">
                             Toggle Description
                         </button>
-                        <button
-                            onClick={() => handleToggleDates(hw.id)}
-                            className="toggle-dates"
-                        >
+                        <button onClick={() => handleToggleDates(hw.id)} className="toggle-dates">
                             Toggle Dates
                         </button>
-                        {!hw.is_public && (<button
-                            onClick={() => handleDelete(hw.id)}
-                            className="delete"
-                        >
-                            ❌
-                        </button>)}
-                        <button className='Publish' onClick={() => publishNewHomework(hw)}>
+
+                        {!hw.is_public && (
+                            <button onClick={() => handleDelete(hw.id)} className="delete">
+                                ❌
+                            </button>
+                        )}
+
+                        <button className="Publish" onClick={() => publishNewHomework(hw)}>
                             Publish
                         </button>
-                        <button className='Publish' onClick={() => saveDraft(hw)}>
+                        <button className="Publish" onClick={() => saveDraft(hw)}>
                             Save Draft
                         </button>
+
                         {hw.showDates && (
                             <div>
                                 <label>
@@ -182,7 +229,6 @@ function SavedHomeworks() {
 
                     {hw.showTitle && (
                         <input
-                            id="message-text"
                             type="text"
                             value={hw.title}
                             onChange={(e) => handleTitleChange(hw.id, e.target.value)}
@@ -193,7 +239,6 @@ function SavedHomeworks() {
 
                     {hw.showInput && (
                         <input
-                            id="message-text"
                             type="text"
                             value={hw.description}
                             onChange={(e) => handleInputChange(hw.id, e.target.value)}
@@ -201,12 +246,10 @@ function SavedHomeworks() {
                             className="input"
                         />
                     )}
-
                 </div>
             ))}
         </div>
-    )
-
+    );
 }
 
-export {SavedHomeworks};
+export { SavedHomeworks };

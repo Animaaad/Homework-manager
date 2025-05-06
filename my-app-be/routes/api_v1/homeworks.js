@@ -4,6 +4,9 @@ const { getHomeworks } = require('../../models/homeworks.js');
 var pool = require('../../config/db.js');
 const { getStudentHomeworks } = require('../../models/homeworks.js');
 const { editSavedHomework } = require('../../models/homeworks.js');
+const { deleteHomework } = require('../../models/homeworks.js');
+const {addSubject} = require('../../models/homeworks.js');
+const { getSubjects } = require('../../models/homeworks.js');
 
 //const messages = ["lol", "ahahaha"];  sample data
 var router = express.Router();
@@ -21,13 +24,51 @@ router.get('/', function (req, res, next) {
     })
 });
 
-router.post('/', function (req, res, next) {
+router.post('/', async function (req, res, next) {
+
     console.log("post");
     const userId = req.session.userId;
     if (!userId) {
         return res.status(401).json({ error: 'Not authenticated' });
     }
     addHomework(req.body, userId).then(
+        (r) => res.status(200)
+    ).catch(
+        (e) => {
+            console.log(e);
+            res.status(500);
+        }
+    );
+});
+
+router.post('/subjects', async function (req, res, next) {
+
+    console.log("post");
+    try {
+        await addSubject(req.body);
+    }
+    catch (err) {
+        if (err.code === '23505') {
+            res.status(409).json({ error: 'User already exists' }); // Conflict
+        } else {
+            console.error("Unexpected error:", err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+});
+
+router.get('/subjects', function (req, res, next) {
+    getSubjects().then((homeworks) => {
+        res.json(homeworks.rows)
+    }).catch((err) => {
+        console.log(err); res.status(500)
+    })
+});
+
+router.post('/delete', function (req, res, next) {
+    console.log(req.body);
+    const {id} = req.body;
+    deleteHomework(id).then(
         (r) => res.status(200)
     ).catch(
         (e) => {
@@ -53,8 +94,6 @@ router.post("/student", (req, res) => {
     const id = req.body.id;
     const userId = req.session.userId;
     console.log(userId + " " + id + " " + hwId)
-    pool.query("SELECT NOW()")
-        .then((result) => console.log("DB time:", result.rows[0]))
     pool.query(
         `INSERT INTO public.students_homeworks (id, note, hwID, studentId)
          VALUES ($1, $2, $3, $4) `,
@@ -90,5 +129,7 @@ router.post("/student/update", (req, res) => {
         console.log(err); res.status(500)
     })
 })
+
+
 
 module.exports = router;

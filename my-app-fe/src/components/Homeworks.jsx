@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { addHomework, getHomeworks, updateHomework } from '../services/homeworkService'
+import { addHomework, updateHomework, getSubjects } from '../services/homeworkService'
 
 
 
 function Homeworks(props) {
     const [homeworks, setHomeworks] = useState([]);
-    const navigate = useNavigate();
-
-    const [searchQuery, setSearchQuery] = useState("");
-
-    let handleSearch = (e) => {
-        e.preventDefault();
-        setSearchQuery("");
-    }
+    const [options, setOptions] = useState([]);
+    useEffect(() => {
+        getSubjects()
+            .then((sjs) => {
+                setOptions(sjs);
+            })
+            .catch((error) => {
+                console.log(error.message);
+                setHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    navigate("/");
+                }
+            });
+    }, []);
 
     function publishNewHomework(hw) {
         console.log(hw.id)
@@ -29,7 +35,7 @@ function Homeworks(props) {
                 "assignment_date": hw.assign_date,
                 "due_date": hw.due_date,
                 "is_public": true,
-                //"subject": hw.subject
+                "subject": hw.subject
             })
                 .catch((error) => {
                     console.log(error.message);
@@ -45,26 +51,34 @@ function Homeworks(props) {
         setHomeworks(homeworks.map(hw2 =>
             hw2.id === hw.id ? { ...hw2, is_saved: true } : hw2
         ));
-        addHomework({
-            "id": hw.id,
-            "title": hw.title,
-            "description": hw.description,
-            "assignment_date": hw.due_date,
-            "due_date": hw.assign_date,
-            "is_public": false
-        })
-            .catch((error) => {
-                console.log(error.message);
+        if (!hw.is_saved) {
+            console.log("adding")
+            addHomework({
+                "id": hw.id,
+                "title": hw.title,
+                "description": hw.description,
+                "assignment_date": hw.assign_date,
+                "due_date": hw.due_date,
+                "is_public": false,
+                "subject": hw.subject
             })
+                .catch((error) => {
+                    console.log(error.message);
+                })
+        } else {
+            console.log(hw.id)
+            updateHomework(hw.id)
+        }
     }
 
     const handleAddHomework = () => {
-        const id = Date.now(); // Unique ID
+        const id = crypto.randomUUID(); // Unique ID
         setHomeworks([...homeworks, {
             id, showInput: false, showDates: false,
             showTitle: false, title: '', description: '',
             is_saved: false, is_public: false, due_date: '',
-            assign_date: ''
+            assign_date: '', subject: { code: '', name: '' },
+            showSubject: false
         }]);
     };
 
@@ -117,6 +131,28 @@ function Homeworks(props) {
         ));
     };
 
+    const toggleSubject = (hw) => {
+        console.log("aaaaaa")
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === hw.id
+                ? { ...hw2, showSubject: !hw2.showSubject }
+                : hw2
+        ))
+    };;
+
+    const handleSelect = (hw, option) => {
+        setHomeworks(homeworks.map(hw2 =>
+            hw2.id === hw.id
+                ? { ...hw2, subject: option, showSubject: false }
+                : hw2
+        ));
+    };
+
+    const getSubjectLabel = (code) => {
+        const match = options.find(opt => opt.code === code);
+        return match ? `Subject: ${match.name}` : "Select a subject";
+    };
+
     return (
         <div className="homeworks">
             <button
@@ -135,10 +171,30 @@ function Homeworks(props) {
                             Toggle Title
                         </button>
                         <button
+                            onClick={() => toggleSubject(hw)}
+                            className="w-full border rounded px-4 py-2 bg-white shadow text-left"
+                        >
+                            {getSubjectLabel(hw.subject.code)}
+                        </button>
+
+                        {hw.showSubject && (
+                            <ul className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto border bg-white shadow rounded">
+                                {options.map((option) => (
+                                    <li
+                                        key={option.code}
+                                        onClick={() => handleSelect(hw, option)}
+                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    >
+                                        {option.code} - {option.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        <button
                             onClick={() => handleToggleDescription(hw.id)}
                             className="toggle-input"
                         >
-                            Toggle Descrition
+                            Toggle Description
                         </button>
                         <button
                             onClick={() => handleToggleDates(hw.id)}
@@ -208,4 +264,4 @@ function Homeworks(props) {
     )
 }
 
-export {Homeworks};  
+export { Homeworks };  

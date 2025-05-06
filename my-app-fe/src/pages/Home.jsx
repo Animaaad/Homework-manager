@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 //import { addMessage } from '../services/homeworkService'
 import { getHomeworks, getStudentHomeworks, editNote } from '../services/homeworkService';
 import { addStudentHomework } from '../services/homeworkService'
+import { useNavigate } from "react-router-dom";
 
 function Home() {
 
@@ -9,7 +10,7 @@ function Home() {
   const [homeworks, setHomeworks] = useState([]);
   const [savedHomeworks, setSavedHomeworks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const navigate = useNavigate();
   let addNewHomework = (hw) => {
     console.log(hw.id)
     setHomeworks(homeworks.map(hw2 =>
@@ -32,7 +33,7 @@ function Home() {
     getHomeworks()
       .then((homeworks1) => {
         console.log(homeworks1)
-        setHomeworks(homeworks1);
+        setHomeworks(homeworks1.map(hw => hw.subject === null ? {...hw, subject: ''} : hw));
         //props.setError('');
       })
       .catch((error) => {
@@ -102,7 +103,8 @@ function Home() {
         onChange={(e) => setSearchQuery(e.target.value)}
       />
       {homeworks.map((hw, index) =>
-        hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) && (
+        (hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) 
+        || hw.subject.toLowerCase().startsWith(searchQuery.toLowerCase())) && (
           <div key={index}>
             {hw.title} {hw.description}
             <button className='addhw' onClick={() => addNewHomework(hw)}>
@@ -115,7 +117,7 @@ function Home() {
       <div className='added'>
         {savedHomeworks.map((hw) => (
           <div key={hw.id}>
-            {hw.title} {hw.description}
+            {hw.title} {hw.description} {hw.subject}
             <button
               onClick={() => handleToggleNote(hw.id)}
               className="toggle-note"
