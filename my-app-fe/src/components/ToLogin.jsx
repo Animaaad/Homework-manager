@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 function ToLogin() {
-    return <nav className="NavBar">
-        <div className="navbar-brand">
-            <Link to = "/login">log in</Link>
-        </div>
-    </nav>
+  return (
+    <Link to="/login" className="btn btn-outline-primary btn-lg">
+      Log In
+    </Link>
+  );
 }
 
 export default ToLogin;

@@ -73,8 +73,8 @@ function PublishedHomeworks() {
 
     const handleDueDateChange = (id, newDate) => {
         setHomeworks(prev =>
-            prev.map(hw => hw.id === id ? 
-                 { ...hw, newDate: newDate } : hw
+            prev.map(hw => hw.id === id ?
+                { ...hw, newDate: newDate } : hw
             ));
     };
 
@@ -91,64 +91,65 @@ function PublishedHomeworks() {
     };
 
     return (
-        <div className="homeworks">
+        <div className="container mt-4">
             {homeworks.map((hw) => (
-                <div key={hw.id} className="add-hws">
-                    <div className="features">
-                        <button
-                            onClick={() => handleToggleTitle(hw.id)}
-                            className="toggle-title"
-                        >
-                            Toggle Title
-                        </button>
-                        <button
-                            onClick={() => handleToggleDescription(hw.id)}
-                            className="toggle-input"
-                        >
-                            Toggle Description
-                        </button>
-                        <button
-                            onClick={() => handleToggleDates(hw.id)}
-                            className="toggle-dates"
-                        >
-                            Toggle Dates
-                        </button>
-                        {!hw.is_public && (<button
-                            onClick={() => handleDelete(hw.id)}
-                            className="delete"
-                        >
-                            ❌
-                        </button>)}
-                        <button className='Publish' onClick={() => publishNewHomework(hw)}>
-                            Save changes
-                        </button>
-                        
+                <div key={hw.id} className="card mb-3 shadow-sm">
+                    <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-start flex-wrap mb-3">
+                            <div className="btn-group mb-2" role="group">
+                                <button onClick={() => handleToggleTitle(hw.id)} className="btn btn-outline-primary btn-sm">
+                                    Toggle Title
+                                </button>
+                                <button onClick={() => handleToggleDescription(hw.id)} className="btn btn-outline-primary btn-sm">
+                                    Toggle Description
+                                </button>
+                                <button onClick={() => handleToggleDates(hw.id)} className="btn btn-outline-primary btn-sm">
+                                    Toggle Dates
+                                </button>
+                            </div>
+                            <div className="btn-group mb-2" role="group">
+                                {!hw.is_public && (
+                                    <button onClick={() => handleDelete(hw.id)} className="btn btn-outline-danger btn-sm">
+                                        ❌
+                                    </button>
+                                )}
+                                <button className="btn btn-success btn-sm" onClick={() => publishNewHomework(hw)}>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+
                         {hw.showDates && (
-                            <div>
-                                <label>
-                                    Assignment Date: &nbsp;
+                            <div className="mb-3">
+                                <div className="form-group mb-2">
+                                    <label className="form-label">Assignment Date:</label>
                                     <input
                                         type="datetime-local"
+                                        className="form-control"
                                         value={formatForDatetimeLocal(hw.assign_date)}
                                         disabled
                                     />
-                                </label>
-                                <label>
-                                    Due Date: &nbsp;
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Due Date:</label>
                                     <input
                                         type="datetime-local"
+                                        className="form-control"
                                         value={formatForDatetimeLocal(hw.newDate) || formatForDatetimeLocal(hw.due_date)}
                                         onChange={(e) => handleDueDateChange(hw.id, e.target.value)}
                                     />
-                                </label>
+                                </div>
                             </div>
                         )}
+
+                        {hw.showTitle && (
+                            <h5 className="card-title">{hw.title}</h5>
+                        )}
+
+                        {hw.showInput && (
+                            <p className="card-text">{hw.description}</p>
+                        )}
                     </div>
-
-                    {hw.showTitle && hw.title}
-
-                    {hw.showInput && hw.description}
-
                 </div>
             ))}
         </div>

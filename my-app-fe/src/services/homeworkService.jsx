@@ -11,7 +11,6 @@ function getHomeworks() {
                 throw new Error("Error getting messages");
             }
 
-            console.log("Response ok");
             return response.json();
         });
 }
@@ -157,7 +156,6 @@ function addSubject(subject) {
               throw error;
             });
           }
-          console.log("Response ok");
           return response.json();
     });
 }
@@ -173,7 +171,6 @@ function getSubjects() {
                 throw new Error("Error getting messages");
             }
 
-            console.log("Response ok");
             return response.json();
         });
 }

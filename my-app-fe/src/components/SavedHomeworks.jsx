@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { addHomework, getHomeworks, getSubjects, updateHomework, deleteHomework } from '../services/homeworkService';
 
-function SavedHomeworks() {
+function SavedHomeworks(props) {
     const [homeworks, setHomeworks] = useState([]);
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
@@ -14,13 +14,13 @@ function SavedHomeworks() {
             })
             .catch((error) => {
                 console.log(error.message);
+                props.setError(error.message)
                 setHomeworks([]);
                 if (error.message === 'Not authenticated') {
                     navigate("/");
                 }
             });
     }, []);
-
 
     function publishNewHomework(hw) {
         setHomeworks(homeworks.map(hw2 =>
@@ -156,96 +156,107 @@ function SavedHomeworks() {
     };
 
     return (
-        <div className="homeworks">
+        <div className="container mt-4">
             {homeworks.map((hw) => (
-                <div key={hw.id} className="add-hws">
-                    <div className="features">
-                        <button onClick={() => handleToggleTitle(hw.id)} className="toggle-title">
-                            Toggle Title
-                        </button>
-
-                        <button
-                            onClick={() => toggleSubject(hw)}
-                            className="w-full border rounded px-4 py-2 bg-white shadow text-left"
-                        >
-                            {getSubjectLabel(hw.subject?.code)}
-                        </button>
-
-                        {hw.showSubject && (
-                            <ul className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto border bg-white shadow rounded">
-                                {options.map((option) => (
-                                    <li
-                                        key={option.code}
-                                        onClick={() => handleSelect(hw, option)}
-                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                    >
-                                        {option.code} - {option.name}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-
-                        <button onClick={() => handleToggleDescription(hw.id)} className="toggle-input">
-                            Toggle Description
-                        </button>
-                        <button onClick={() => handleToggleDates(hw.id)} className="toggle-dates">
-                            Toggle Dates
-                        </button>
-
-                        {!hw.is_public && (
-                            <button onClick={() => handleDelete(hw.id)} className="delete">
-                                ❌
+                <div key={hw.id} className="card mb-4 shadow-sm">
+                    <div className="card-body">
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                            <button onClick={() => handleToggleTitle(hw.id)} className="btn btn-outline-primary btn-sm">
+                                Toggle Title
                             </button>
-                        )}
 
-                        <button className="Publish" onClick={() => publishNewHomework(hw)}>
-                            Publish
-                        </button>
-                        <button className="Publish" onClick={() => saveDraft(hw)}>
-                            Save Draft
-                        </button>
+                            <div className="position-relative">
+                                <button
+                                    onClick={() => toggleSubject(hw)}
+                                    className="btn btn-outline-secondary btn-sm"
+                                >
+                                    {getSubjectLabel(hw.subject?.code) || "Select Subject"}
+                                </button>
+
+                                {hw.showSubject && (
+                                    <ul className="list-group position-absolute mt-1 shadow" style={{ zIndex: 1000, maxHeight: '160px', overflowY: 'auto', width: '100%' }}>
+                                        {options.map((option) => (
+                                            <li
+                                                key={option.code}
+                                                onClick={() => handleSelect(hw, option)}
+                                                className="list-group-item list-group-item-action"
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                {option.code} - {option.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+
+                            <button onClick={() => handleToggleDescription(hw.id)} className="btn btn-outline-primary btn-sm">
+                                Toggle Description
+                            </button>
+                            <button onClick={() => handleToggleDates(hw.id)} className="btn btn-outline-primary btn-sm">
+                                Toggle Dates
+                            </button>
+
+                            {!hw.is_public && (
+                                <button onClick={() => handleDelete(hw.id)} className="btn btn-outline-danger btn-sm">
+                                    ❌
+                                </button>
+                            )}
+
+                            <button className="btn btn-success btn-sm" onClick={() => publishNewHomework(hw)}>
+                                Publish
+                            </button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => saveDraft(hw)}>
+                                Save Draft
+                            </button>
+                        </div>
 
                         {hw.showDates && (
-                            <div>
-                                <label>
-                                    Assignment Date: &nbsp;
+                            <div className="row mb-3">
+                                <div className="col-md-6 mb-2">
+                                    <label className="form-label">Assignment Date</label>
                                     <input
                                         type="datetime-local"
+                                        className="form-control"
                                         value={hw.assign_date}
                                         onChange={(e) => handleAssignDateChange(hw.id, e.target.value)}
                                     />
-                                </label>
-                                <label>
-                                    Due Date: &nbsp;
+                                </div>
+                                <div className="col-md-6 mb-2">
+                                    <label className="form-label">Due Date</label>
                                     <input
                                         type="datetime-local"
+                                        className="form-control"
                                         value={hw.due_date}
                                         onChange={(e) => handleDueDateChange(hw.id, e.target.value)}
                                     />
-                                </label>
+                                </div>
+                            </div>
+                        )}
+
+                        {hw.showTitle && (
+                            <div className="mb-3">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Title..."
+                                    value={hw.title}
+                                    onChange={(e) => handleTitleChange(hw.id, e.target.value)}
+                                />
+                            </div>
+                        )}
+
+                        {hw.showInput && (
+                            <div>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Type something..."
+                                    value={hw.description}
+                                    onChange={(e) => handleInputChange(hw.id, e.target.value)}
+                                />
                             </div>
                         )}
                     </div>
-
-                    {hw.showTitle && (
-                        <input
-                            type="text"
-                            value={hw.title}
-                            onChange={(e) => handleTitleChange(hw.id, e.target.value)}
-                            placeholder="Title:..."
-                            className="input"
-                        />
-                    )}
-
-                    {hw.showInput && (
-                        <input
-                            type="text"
-                            value={hw.description}
-                            onChange={(e) => handleInputChange(hw.id, e.target.value)}
-                            placeholder="Type something..."
-                            className="input"
-                        />
-                    )}
                 </div>
             ))}
         </div>

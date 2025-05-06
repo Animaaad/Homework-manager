@@ -1,5 +1,5 @@
 var express = require('express'); // ESM: import
-var { getUsers } = require('../../models/users.js');
+var { getUser } = require('../../models/users.js');
 var { comparePassword, hashPassword } = require('../../utils/authHelpers.js');
 const { config } = require('../../config/config.js');
 var router = express.Router();
@@ -30,7 +30,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", (req, res) => {
     const { username, password } = req.body;
-    getUsers(username)
+    getUser(username)
         .then((result) => {
             if (result.rows && result.rows.length === 1) {
                 user = result.rows[0];
@@ -96,13 +96,13 @@ router.get('/me', async (req, res) => {
     }
 
     try {
-        const result = await pool.query('SELECT id, username, is_teacher FROM users WHERE id = $1', [userId]);
+        const result = await getUser(userId);
         const user = result.rows[0];
-
+        console.log(user + "qaqaqaq")
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        console.log(user);
         res.json({ user });
     } catch (error) {
         console.error(error);

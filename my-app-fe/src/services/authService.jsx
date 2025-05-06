@@ -9,7 +9,6 @@ function login(username, password) {
     credentials: "include"
   })
     .then((response) => {
-      console.log(response)
       if (!response.ok) {
         // invalid password or user does not exist
         if (response.status === 401) {
@@ -57,14 +56,17 @@ function addUser(user) {
 }
 
 export function getCurrentUser() {
+
   return fetch(`/api/v1/auth/me`, {
     method: "GET",
     credentials: "include"
   }).then((res) => {
+
     if (!res.ok) {
+      console.log("whyayaya")
       throw new Error("Not authenticated");
     }
-    return res.json(); // { user: { id, username, is_teacher } }
+    return res.json();
   });
 }
 

@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 function ToRegistration() {
-    return <nav className="NavBar">
-        <div className="navbar-brand">
-            <Link to = "/register">registration</Link>
-        </div>
-    </nav>
+  return (
+    <Link to="/register" className="btn btn-outline-success btn-lg">
+      Register
+    </Link>
+  );
 }
 
 export default ToRegistration;

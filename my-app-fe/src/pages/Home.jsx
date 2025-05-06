@@ -1,77 +1,62 @@
 import { useState, useEffect } from 'react';
-//import { addMessage } from '../services/homeworkService'
-import { getHomeworks, getStudentHomeworks, editNote } from '../services/homeworkService';
-import { addStudentHomework } from '../services/homeworkService'
+import { getHomeworks, getStudentHomeworks, editNote, addStudentHomework } from '../services/homeworkService';
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-
-  //const homeworks = ["a", "b"];
   const [homeworks, setHomeworks] = useState([]);
   const [savedHomeworks, setSavedHomeworks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAvailableHomeworks, setShowAvailableHomeworks] = useState(true); // <-- NEW STATE
   const navigate = useNavigate();
-  let addNewHomework = (hw) => {
-    console.log(hw.id)
+
+  const addNewHomework = (hw) => {
+    let a = savedHomeworks.some(item => item.hwid === hw.id);
     setHomeworks(homeworks.map(hw2 =>
       hw2.id === hw.id ? { ...hw2, is_added: true } : hw2
     ));
-    if (!hw.is_added) {
+    if (!hw.is_added && !a) {
       addStudentHomework({
-        "id": crypto.randomUUID(),
-        "hwId": hw.id
-      })
-        .catch((error) => {
-          console.log(error.message);
-        })
+        id: crypto.randomUUID(),
+        hwId: hw.id
+      }).catch((error) => {
+        console.log(error.message);
+      });
     } else {
-      console.log("already saved")
+      alert("The homework is already saved");
     }
-  }
+  };
 
   useEffect(() => {
     getHomeworks()
       .then((homeworks1) => {
-        console.log(homeworks1)
-        setHomeworks(homeworks1.map(hw => hw.subject === null ? {...hw, subject: ''} : hw));
-        //props.setError('');
+        setHomeworks(homeworks1.map(hw => hw.subject === null ? { ...hw, subject: '' } : hw));
       })
       .catch((error) => {
         console.log(error.message);
-        //props.setError(error.message);
         setHomeworks([]);
         if (error.message === 'Not authenticated') {
-          //props.setAuthStatus(false);
           navigate("/");
         }
-      })
+      });
   }, []);
 
   useEffect(() => {
     getStudentHomeworks()
       .then((homeworks1) => {
-        console.log(homeworks1)
         setSavedHomeworks(homeworks1);
-        //props.setError('');
       })
       .catch((error) => {
         console.log(error.message);
-        //props.setError(error.message);
         setSavedHomeworks([]);
         if (error.message === 'Not authenticated') {
-          //props.setAuthStatus(false);
           navigate("/");
         }
-      })
+      });
   }, []);
-  //const fetchMessagesInterval = setInterval(fetchMessages, 100000);
-  //return () => clearInterval(fetchMessagesInterval);
 
   const handleNoteChange = (id, newText) => {
     setSavedHomeworks(savedHomeworks.map(hw =>
-      hw.id === id
-        ? { ...hw, note: newText }
-        : hw
+      hw.id === id ? { ...hw, note: newText } : hw
     ));
   };
 
@@ -82,73 +67,93 @@ function Home() {
   };
 
   const handleSubmit = (hw) => {
-    console.log(hw.id)
     editNote({
-      "id" : hw.id,
-      "note" : hw.note
-    })
-      .catch((error) => {
-        console.log(error.message);
-      })
-  }
-
+      id: hw.id,
+      note: hw.note
+    }).catch((error) => {
+      console.log(error.message);
+    });
+  };
 
   return (
-    <div className="hws">
-      <input
-        type="text"
-        placeholder="Search for homeworks..."
-        className="search-input"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      {homeworks.map((hw, index) =>
-        (hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) 
-        || hw.subject.toLowerCase().startsWith(searchQuery.toLowerCase())) && (
-          <div key={index}>
-            {hw.title} {hw.description}
-            <button className='addhw' onClick={() => addNewHomework(hw)}>
-              Save homework
+    <div className="container py-4">
+  <h4 className="mb-3">Search & Add Homeworks</h4>
+
+  <input
+    type="text"
+    className="form-control mb-3"
+    placeholder="Search for homeworks..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+  />
+
+  <button
+    className="btn btn-sm btn-warning mb-4"
+    onClick={() => setShowAvailableHomeworks(prev => !prev)}
+  >
+    {showAvailableHomeworks ? "Hide Homeworks" : "Show Homeworks"}
+  </button>
+
+  {showAvailableHomeworks && (
+    <div className="mb-5">
+      {homeworks
+        .filter(hw =>
+          hw.title.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+          hw.subject.toLowerCase().startsWith(searchQuery.toLowerCase())
+        )
+        .map((hw) => (
+          <div key={hw.id} className="card mb-3 p-3">
+            <div><strong>{hw.title}</strong></div>
+            <div className="text-muted">{hw.description}</div>
+            <div className="text-secondary mb-2">{hw.subject}</div>
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => addNewHomework(hw)}
+            >
+              Save Homework
             </button>
           </div>
-        )
-      )}
-      Added homeworks:
-      <div className='added'>
+        ))}
+    </div>
+  )}
+
+      <h4 className="mb-3">Added Homeworks</h4>
+      <div>
         {savedHomeworks.map((hw) => (
-          <div key={hw.id}>
-            {hw.title} {hw.description} {hw.subject}
+          <div key={hw.id} className="card mb-3 p-3">
+            <div><strong>{hw.title}</strong></div>
+            <div className="text-muted">{hw.description}</div>
+            <div className="text-secondary mb-2">{hw.subject}</div>
+
             <button
+              className="btn btn-sm btn-outline-secondary mb-2"
               onClick={() => handleToggleNote(hw.id)}
-              className="toggle-note"
             >
-              Toggle Note
+              {hw.showNote ? 'Hide Note' : 'Add/Edit Note'}
             </button>
+
             {hw.showNote && (
-              <div>
+              <div className="mt-2">
                 <input
-                  id="message-text"
                   type="text"
                   value={hw.note}
                   onChange={(e) => handleNoteChange(hw.id, e.target.value)}
-                  placeholder="Note:..."
-                  className="input"
+                  placeholder="Note..."
+                  className="form-control mb-2"
                 />
                 <button
                   onClick={() => handleSubmit(hw)}
-                  className="toggle-note"
+                  className="btn btn-sm btn-success"
                 >
-                  Save note
+                  Save Note
                 </button>
               </div>
-            )
-            }
+            )}
           </div>
         ))}
       </div>
-      {/*<HomeworkList homeworks={homeworkss}></HomeworkList>*/}
     </div>
-  )
+  );
 }
 
 export { Home };

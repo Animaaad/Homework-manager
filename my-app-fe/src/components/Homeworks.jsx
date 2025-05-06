@@ -154,110 +154,105 @@ function Homeworks(props) {
     };
 
     return (
-        <div className="homeworks">
-            <button
-                onClick={handleAddHomework}
-                className="add-homework"
-            >
+        <div className="container mt-4">
+            <button onClick={handleAddHomework} className="btn btn-primary mb-3">
                 Add Homework
             </button>
-            {homeworks.map((hw) => (
-                <div key={hw.id} className="add-hws">
-                    <div className="features">
-                        <button
-                            onClick={() => handleToggleTitle(hw.id)}
-                            className="toggle-title"
-                        >
-                            Toggle Title
-                        </button>
-                        <button
-                            onClick={() => toggleSubject(hw)}
-                            className="w-full border rounded px-4 py-2 bg-white shadow text-left"
-                        >
-                            {getSubjectLabel(hw.subject.code)}
-                        </button>
 
-                        {hw.showSubject && (
-                            <ul className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto border bg-white shadow rounded">
-                                {options.map((option) => (
-                                    <li
-                                        key={option.code}
-                                        onClick={() => handleSelect(hw, option)}
-                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                    >
-                                        {option.code} - {option.name}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                        <button
-                            onClick={() => handleToggleDescription(hw.id)}
-                            className="toggle-input"
-                        >
-                            Toggle Description
-                        </button>
-                        <button
-                            onClick={() => handleToggleDates(hw.id)}
-                            className="toggle-dates"
-                        >
-                            Toggle Dates
-                        </button>
-                        {!hw.is_public && (<button
-                            onClick={() => handleDelete(hw.id)}
-                            className="delete"
-                        >
-                            ❌
-                        </button>)}
-                        <button className='Publish' onClick={() => publishNewHomework(hw)}>
-                            Publish
-                        </button>
-                        <button className='Publish' onClick={() => saveDraft(hw)}>
-                            Save Draft
-                        </button>
+            {homeworks.map((hw) => (
+                <div key={hw.id} className="card mb-3">
+                    <div className="card-body">
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                            <button onClick={() => handleToggleTitle(hw.id)} className="btn btn-secondary">
+                                Toggle Title
+                            </button>
+
+                            <div className="position-relative">
+                                <button onClick={() => toggleSubject(hw)} className="btn btn-light border">
+                                    {getSubjectLabel(hw.subject.code)}
+                                </button>
+                                {hw.showSubject && (
+                                    <ul className="list-group position-absolute mt-1" style={{ zIndex: 1000, maxHeight: '160px', overflowY: 'auto' }}>
+                                        {options.map((option) => (
+                                            <li
+                                                key={option.code}
+                                                className="list-group-item list-group-item-action"
+                                                onClick={() => handleSelect(hw, option)}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                {option.code} - {option.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+
+                            <button onClick={() => handleToggleDescription(hw.id)} className="btn btn-secondary">
+                                Toggle Description
+                            </button>
+
+                            <button onClick={() => handleToggleDates(hw.id)} className="btn btn-secondary">
+                                Toggle Dates
+                            </button>
+
+                            {!hw.is_public && (
+                                <button onClick={() => handleDelete(hw.id)} className="btn btn-danger">
+                                    ❌
+                                </button>
+                            )}
+
+                            <button className="btn btn-success" onClick={() => publishNewHomework(hw)}>
+                                Publish
+                            </button>
+
+                            <button className="btn btn-outline-primary" onClick={() => saveDraft(hw)}>
+                                Save Draft
+                            </button>
+                        </div>
+
                         {hw.showDates && (
-                            <div>
-                                <label>
-                                    Assignment Date: &nbsp;
+                            <div className="mb-3">
+                                <div className="mb-2">
+                                    <label className="form-label">Assignment Date:</label>
                                     <input
                                         type="datetime-local"
+                                        className="form-control"
                                         value={hw.assign_date}
                                         onChange={(e) => handleAssignDateChange(hw.id, e.target.value)}
                                     />
-                                </label>
-                                <label>
-                                    Due Date: &nbsp;
+                                </div>
+                                <div>
+                                    <label className="form-label">Due Date:</label>
                                     <input
                                         type="datetime-local"
+                                        className="form-control"
                                         value={hw.due_date}
                                         onChange={(e) => handleDueDateChange(hw.id, e.target.value)}
                                     />
-                                </label>
+                                </div>
                             </div>
                         )}
+
+                        {hw.showTitle && (
+                            <input
+                                type="text"
+                                className="form-control mb-2"
+                                value={hw.title}
+                                onChange={(e) => handleTitleChange(hw.id, e.target.value)}
+                                placeholder="Title..."
+                            />
+                        )}
+
+                        {hw.showInput && (
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={hw.description}
+                                onChange={(e) => handleInputChange(hw.id, e.target.value)}
+                                placeholder="Type something..."
+                            />
+                        )}
                     </div>
-
-                    {hw.showTitle && (
-                        <input
-                            id="message-text"
-                            type="text"
-                            value={hw.title}
-                            onChange={(e) => handleTitleChange(hw.id, e.target.value)}
-                            placeholder="Title:..."
-                            className="input"
-                        />
-                    )}
-
-                    {hw.showInput && (
-                        <input
-                            id="message-text"
-                            type="text"
-                            value={hw.description}
-                            onChange={(e) => handleInputChange(hw.id, e.target.value)}
-                            placeholder="Type something..."
-                            className="input"
-                        />
-                    )}
-
                 </div>
             ))}
         </div>

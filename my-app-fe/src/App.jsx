@@ -29,8 +29,10 @@ function App() {
         <Header
           authStatus={authStatus} setAuthStatus={setAuthStatus} setError={setError} error={error} />
         <Routes>
-          <Route path="/" element={<FirstPage />} />
-          <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/" element={<FirstPage
+           authStatus={authStatus} setAuthStatus={setAuthStatus}/>} />
+          <Route path="/register" element={<RegistrationPage 
+          authStatus={authStatus} setAuthStatus={setAuthStatus}/>} />
           <Route path="/thome" element={<THome
             error={error} setError={setError} authStatus={authStatus} setAuthStatus={setAuthStatus} />} />
           <Route path="/home" element={<Home

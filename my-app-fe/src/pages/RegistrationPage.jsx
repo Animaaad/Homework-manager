@@ -1,9 +1,8 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { addUser } from '../services/authService'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { addUser } from '../services/authService';
 
-function RegistrationPage() {
-
+function RegistrationPage(props) {
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
     const [password, setPassword] = useState('');
@@ -12,7 +11,7 @@ function RegistrationPage() {
     const navigate = useNavigate();
 
     const handleSubm = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         addUser({
             "id": crypto.randomUUID(),
             "username": username,
@@ -20,55 +19,61 @@ function RegistrationPage() {
             "first_name": firstName,
             "last_name": lastName
         }).then(() => {
-            navigate('/login')
-        })
-            .catch((error) => {
-                if (error.response?.status === 409) {
-                    alert("User already exists");
-                } else {
-                    alert("Something went wrong.");
-                    console.error(error.message);
-                }
-            })
+            navigate('/login');
+        }).catch((error) => {
+            if (error.response?.status === 409) {
+                alert("User already exists");
+            } else {
+                alert("Something went wrong.");
+                console.error(error.message);
+            }
+        });
     };
 
     return (
-        <div className="register">
-            <form onSubmit={handleSubm} className="enter-symbols">
-                <input type="text"
-                    placeholder="Enter username"
-                    className="enter-username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="First name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="LastName"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                />
-                <button type="submit" className="submit-button">
-                    Submit
-                </button>
+        <div className="registration-container">
+            <div className="registration-form">
+                <h2 className="text-center mb-4">Create an Account</h2>
+                <form onSubmit={handleSubm}>
+                    <input
+                        type="text"
+                        placeholder="Enter username"
+                        className="form-input"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="form-input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder="First name"
+                        className="form-input"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder="Last name"
+                        className="form-input"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                    />
+                    <button type="submit" className="btn btn-primary w-100">
+                        Register
+                    </button>
+                </form>
                 {error && <p className="text-red-500 mt-2">{error}</p>}
-            </form>
+            </div>
         </div>
-    )
+    );
 }
 
-export default RegistrationPage
+export default RegistrationPage;
