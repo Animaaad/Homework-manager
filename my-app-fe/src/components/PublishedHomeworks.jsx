@@ -60,6 +60,12 @@ function PublishedHomeworks(props) {
         ));
     };
 
+    const handleToggleSubject = (id) => {
+        props.setPublishedHomeworks(props.publishedHomeworks.map(hw =>
+            hw.id === id ? { ...hw, showSubject: !hw.showSubject } : hw
+        ));
+    }
+
     const handleToggleTitle = (id) => {
         props.setPublishedHomeworks(props.publishedHomeworks.map(hw =>
             hw.id === id ? { ...hw, showTitle: !hw.showTitle } : hw
@@ -77,7 +83,7 @@ function PublishedHomeworks(props) {
                 { ...hw, newDate: newDate } : hw
             ));
     };
-    
+
 
     const handleDelete = (id) => {
         props.setPublishedHomeworks(props.publishedHomeworks.filter(hw => hw.id !== id));
@@ -87,10 +93,13 @@ function PublishedHomeworks(props) {
         if (!timestamp) return '';
         const date = new Date(timestamp);
         if (isNaN(date)) return ''; // guard against invalid date
-        const offset = date.getTimezoneOffset(); // local timezone adjustment
-        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+      
+        const offset = date.getTimezoneOffset(); // local timezone adjustment in minutes
+        const adjustedTime = date.getTime() - offset * 60 * 1000 - 2 * 60 * 60 * 1000; // minus 2 hours
+        const localDate = new Date(adjustedTime);
+      
         return localDate.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
-    };
+      };
 
     return (
         <div className="container mt-4">
@@ -98,15 +107,21 @@ function PublishedHomeworks(props) {
                 <div key={hw.id} className="card mb-3 shadow-sm">
                     <div className="card-body">
                         <div className="d-flex justify-content-between align-items-start flex-wrap mb-3">
-                            <div className="btn-group mb-2" role="group">
+                            <div className="btn-group align-items-center" role="group">
                                 <button onClick={() => handleToggleTitle(hw.id)} className="btn btn-outline-primary btn-sm">
                                     Toggle Title
                                 </button>
                                 <button onClick={() => handleToggleDescription(hw.id)} className="btn btn-outline-primary btn-sm">
                                     Toggle Description
                                 </button>
+                                <button className="btn btn-outline-primary btn-sm" onClick={() => handleToggleSubject(hw.id)}>
+                                    Toggle Subject
+                                </button>
                                 <button onClick={() => handleToggleDates(hw.id)} className="btn btn-outline-primary btn-sm">
                                     Toggle Dates
+                                </button>
+                                <button className="btn btn-success btn-sm" onClick={() => publishNewHomework(hw)}>
+                                    Save Changes
                                 </button>
                             </div>
                             <div className="btn-group mb-2" role="group">
@@ -114,13 +129,14 @@ function PublishedHomeworks(props) {
                                     <button onClick={() => handleDelete(hw.id)} className="btn btn-outline-danger btn-sm">
                                         ❌
                                     </button>
-                                )}
-                                <button className="btn btn-success btn-sm" onClick={() => publishNewHomework(hw)}>
-                                    Save Changes
-                                </button>
+                                )}                                
                             </div>
                         </div>
-
+                        {hw.showSubject && (
+                            <div className="text-secondary mb-2">
+                                {hw.name}
+                            </div>
+                        )}
                         {hw.showDates && (
                             <div className="mb-3">
                                 <div className="form-group mb-2">

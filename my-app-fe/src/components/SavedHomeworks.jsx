@@ -26,10 +26,14 @@ function SavedHomeworks(props) {
         if (!timestamp) return '';
         const date = new Date(timestamp);
         if (isNaN(date)) return ''; // guard against invalid date
-        const offset = date.getTimezoneOffset(); // local timezone adjustment
-        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+
+        const offset = date.getTimezoneOffset(); // local timezone adjustment in minutes
+        const adjustedTime = date.getTime() - offset * 60 * 1000 - 2 * 60 * 60 * 1000; // minus 2 hours
+        const localDate = new Date(adjustedTime);
+
         return localDate.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
     };
+
     const handleDueDateChange = (id, newDate) => {
         props.setSavedHomeworks(prev =>
             prev.map(hw => hw.id === id ?
@@ -82,7 +86,7 @@ function SavedHomeworks(props) {
                 due_date: newDueDate || oldDate, assignment_date: newAssignDate || oldADate
             } : hw2
         ));
-        console.log(oldADate + "ayaya" + oldDate )
+        console.log(oldADate + "ayaya" + oldDate)
         if (newAssignDate < newDueDate) {
             updateHomework(hw.id, newDueDate, newAssignDate, hw.title, hw.description, true);
         } else {

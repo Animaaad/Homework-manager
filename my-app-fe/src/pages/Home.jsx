@@ -121,8 +121,11 @@ function Home() {
     if (!timestamp) return '';
     const date = new Date(timestamp);
     if (isNaN(date)) return ''; // guard against invalid date
-    const offset = date.getTimezoneOffset(); // local timezone adjustment
-    const localDate = new Date(date.getTime() - offset * 60 * 1000);
+  
+    const offset = date.getTimezoneOffset(); // local timezone adjustment in minutes
+    const adjustedTime = date.getTime() - offset * 60 * 1000 - 2 * 60 * 60 * 1000; // minus 2 hours
+    const localDate = new Date(adjustedTime);
+  
     return localDate.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
   };
 
