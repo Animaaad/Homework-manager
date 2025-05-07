@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Homeworks } from '../components/Homeworks';
 import { SavedHomeworks } from '../components/SavedHomeworks';
 import { PublishedHomeworks } from '../components/PublishedHomeworks';
+import { Subjects } from '../components/Subjects';
 
 function THome(props) {
     const [showSaved, setShowSaved] = useState(false);
@@ -51,6 +52,7 @@ function THome(props) {
                         setPublishedHomeworks={setPublishedHomeworks}/>
                 </>
             )}
+            <Subjects></Subjects>
         </div>
     );
 }
