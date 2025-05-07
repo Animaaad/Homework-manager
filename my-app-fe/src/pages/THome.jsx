@@ -2,18 +2,22 @@ import { useState } from 'react';
 import { Homeworks } from '../components/Homeworks';
 import { SavedHomeworks } from '../components/SavedHomeworks';
 import { PublishedHomeworks } from '../components/PublishedHomeworks';
-import { Subjects } from '../components/Subjects';
 
 function THome(props) {
-    const [showSaved, setShowSaved] = useState(true);
-    const [showPublished, setShowPublished] = useState(true);
+    const [showSaved, setShowSaved] = useState(false);
+    const [showPublished, setShowPublished] = useState(false);
+    const [savedHomeworks, setSavedHomeworks] = useState([]);
+    const [publishedHomeworks, setPublishedHomeworks] = useState([]);
 
     const toggleSaved = () => setShowSaved(!showSaved);
     const togglePublished = () => setShowPublished(!showPublished);
 
     return (
         <div className="add-homeworks">
-            <Homeworks />
+            <Homeworks publishedHomeworks={publishedHomeworks}
+                        savedHomeworks={savedHomeworks}
+                        setSavedHomeworks={setSavedHomeworks}
+                        setPublishedHomeworks={setPublishedHomeworks}/>
 
             <div className="my-3">
                 <button className="btn btn-secondary me-2" onClick={toggleSaved}>
@@ -32,6 +36,10 @@ function THome(props) {
                         setError={props.setError}
                         authStatus={props.authStatus}
                         setAuthStatus={props.setAuthStatus}
+                        publishedHomeworks={publishedHomeworks}
+                        savedHomeworks={savedHomeworks}
+                        setSavedHomeworks={setSavedHomeworks}
+                        setPublishedHomeworks={setPublishedHomeworks}
                     />
                 </>
             )}
@@ -39,11 +47,10 @@ function THome(props) {
             {showPublished && (
                 <>
                     <h5>Published Homeworks:</h5>
-                    <PublishedHomeworks />
+                    <PublishedHomeworks publishedHomeworks={publishedHomeworks}
+                        setPublishedHomeworks={setPublishedHomeworks}/>
                 </>
             )}
-
-            <Subjects />
         </div>
     );
 }

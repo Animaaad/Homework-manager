@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { addHomework, getHomeworks, updateHomework } from '../services/homeworkService'
 
-function PublishedHomeworks() {
+function PublishedHomeworks(props) {
 
-    const [homeworks, setHomeworks] = useState([]);
+    //const [props.publishedHomeworks, props.setPublishedHomeworks] = useState([]);
     const navigate = useNavigate();
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -16,25 +16,25 @@ function PublishedHomeworks() {
 
     useEffect(() => {
         getHomeworks()
-            .then((homeworks) => {
-                console.log(homeworks)
-                setHomeworks(homeworks.filter(hw => hw.is_public === true));
+            .then((homeworks1) => {
+                console.log(homeworks1)
+                props.setPublishedHomeworks(homeworks1.filter(hw => hw.is_public === true));
                 //props.setError('');
             })
             .catch((error) => {
                 console.log(error.message);
                 //props.setError(error.message);
-                setHomeworks([]);
+                props.setPublishedHomeworks([]);
                 if (error.message === 'Not authenticated') {
                     //props.setAuthStatus(false);
-                    navigate("/");
+                    //navigate("/");
                 }
             })
     }, []);
 
     function publishNewHomework(hw) {
         console.log(hw.id)
-        setHomeworks(homeworks.map(hw2 =>
+        props.setPublishedHomeworks(props.publishedHomeworks.map(hw2 =>
             hw2.id === hw.id ? { ...hw2, is_saved: true, is_public: true } : hw2
         ));
 
@@ -43,11 +43,11 @@ function PublishedHomeworks() {
         console.log(hw.due_date)
         console.log(newDueDate)
         if (newDueDate >= oldDate) {
-            setHomeworks(homeworks.map(hw3 =>
+            props.setPublishedHomeworks(props.publishedHomeworks.map(hw3 =>
                 hw3.id === hw.id ? { ...hw3, due_date: newDueDate } : hw3
             ));
-            console.log(hw.due_date)
-            updateHomework(hw.id, newDueDate)
+            console.log(hw.title)
+            updateHomework(hw.id, newDueDate, hw.assignment_date, hw.title, hw.description, true)
         }
         else {
             alert("Due date can only be postponed.");
@@ -55,36 +55,38 @@ function PublishedHomeworks() {
     }
 
     const handleToggleDescription = (id) => {
-        setHomeworks(homeworks.map(hw =>
+        props.setPublishedHomeworks(props.publishedHomeworks.map(hw =>
             hw.id === id ? { ...hw, showInput: !hw.showInput } : hw
         ));
     };
 
     const handleToggleTitle = (id) => {
-        setHomeworks(homeworks.map(hw =>
+        props.setPublishedHomeworks(props.publishedHomeworks.map(hw =>
             hw.id === id ? { ...hw, showTitle: !hw.showTitle } : hw
         ));
     };
 
     const handleToggleDates = (id) => {
-        setHomeworks(homeworks.map(hw =>
+        props.setPublishedHomeworks(props.publishedHomeworks.map(hw =>
             hw.id === id ? { ...hw, showDates: !hw.showDates } : hw))
     }
 
     const handleDueDateChange = (id, newDate) => {
-        setHomeworks(prev =>
+        props.setPublishedHomeworks(prev =>
             prev.map(hw => hw.id === id ?
                 { ...hw, newDate: newDate } : hw
             ));
     };
+    
 
     const handleDelete = (id) => {
-        setHomeworks(homeworks.filter(hw => hw.id !== id));
+        props.setPublishedHomeworks(props.publishedHomeworks.filter(hw => hw.id !== id));
     };
 
     const formatForDatetimeLocal = (timestamp) => {
         if (!timestamp) return '';
         const date = new Date(timestamp);
+        if (isNaN(date)) return ''; // guard against invalid date
         const offset = date.getTimezoneOffset(); // local timezone adjustment
         const localDate = new Date(date.getTime() - offset * 60 * 1000);
         return localDate.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
@@ -92,7 +94,7 @@ function PublishedHomeworks() {
 
     return (
         <div className="container mt-4">
-            {homeworks.map((hw) => (
+            {props.publishedHomeworks.map((hw) => (
                 <div key={hw.id} className="card mb-3 shadow-sm">
                     <div className="card-body">
                         <div className="d-flex justify-content-between align-items-start flex-wrap mb-3">
@@ -126,7 +128,7 @@ function PublishedHomeworks() {
                                     <input
                                         type="datetime-local"
                                         className="form-control"
-                                        value={formatForDatetimeLocal(hw.assign_date)}
+                                        value={formatForDatetimeLocal(hw.assignment_date)}
                                         disabled
                                     />
                                 </div>

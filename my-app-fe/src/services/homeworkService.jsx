@@ -36,7 +36,7 @@ function addHomework(homework) {
     });
 }
 
-function updateHomework(id, due_date) {
+function updateHomework(id, due_date, assignment_date, title, description, is_public) {
     console.log(id)
     return fetch(`/api/v1/homeworks/publish`, {
         method: "POST",
@@ -44,7 +44,7 @@ function updateHomework(id, due_date) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id, due_date })
+        body: JSON.stringify({ id, due_date, assignment_date, title, description, is_public })
     }).then((response) => { // promise is resolved
         if (!response.ok) {
             // "unauthorized" or "unauthenticated" HTTP status
@@ -175,8 +175,29 @@ function getSubjects() {
         });
 }
 
+function changeCompletion(id, completed) {
+    console.log(id)
+    return fetch(`/api/v1/homeworks/student/completion`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, completed })
+    }).then((response) => { // promise is resolved
+        if (!response.ok) {
+            // "unauthorized" or "unauthenticated" HTTP status
+            if (response.status === 401 || response.status === 403) {
+                throw new Error("Not authenticated");
+            }
+            // other error HTTP status
+            throw new Error("Error adding new message");
+        }
+    });
+}
+
 export {
     getHomeworks, addHomework, updateHomework,
     addStudentHomework, getStudentHomeworks, editNote, deleteHomework,
-    addSubject, getSubjects
+    addSubject, getSubjects, changeCompletion
 }

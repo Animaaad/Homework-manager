@@ -23,6 +23,9 @@ function Subjects() {
                 }
             });
         }
+        else {
+            alert("Subject needs to have a code and a name")
+        }
     };
 
     const handleToggleName = (id) => {
@@ -64,7 +67,7 @@ function Subjects() {
 
             {subjects.map((sj) => (
                 <div key={sj.id} className="subject-card p-4 mb-4 rounded shadow-sm">
-                    <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-center">
                         <div>
                             <button
                                 onClick={() => handleToggleName(sj.id)}
@@ -108,7 +111,7 @@ function Subjects() {
                     )}
 
                     <button
-                        className="btn btn-primary mt-3 w-100"
+                        //className="btn btn-primary mt-3 w-100"
                         onClick={() => saveSubject(sj)}
                     >
                         Save the Subject

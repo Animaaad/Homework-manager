@@ -37,6 +37,15 @@ exports.addHomework = function (homework, creator) {
                 homework.subject.code]);
 };
 
+exports.changeCompletion = function (data) {
+    const { id, completed } = data;
+    console.log(completed)
+    return pool.query(
+        `UPDATE students_homeworks SET is_completed = $2 WHERE id = $1`,
+        [id, completed]
+    )
+};
+
 exports.deleteHomework = function (id) {
     return pool.query("DELETE FROM public.homeworks h WHERE h.id = $1",
         [id]);

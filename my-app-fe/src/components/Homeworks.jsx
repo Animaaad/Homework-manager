@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { addHomework, updateHomework, getSubjects } from '../services/homeworkService'
+import { addHomework, updateHomework, getSubjects, getHomeworks } from '../services/homeworkService'
 
 
 
 function Homeworks(props) {
     const [homeworks, setHomeworks] = useState([]);
+
     const [options, setOptions] = useState([]);
     useEffect(() => {
         getSubjects()
@@ -32,7 +33,7 @@ function Homeworks(props) {
                 "id": hw.id,
                 "title": hw.title,
                 "description": hw.description,
-                "assignment_date": hw.assign_date,
+                "assignment_date": hw.assignment_date,
                 "due_date": hw.due_date,
                 "is_public": true,
                 "subject": hw.subject
@@ -44,6 +45,24 @@ function Homeworks(props) {
             console.log(hw.id)
             updateHomework(hw.id)
         }
+
+        getHomeworks()
+            .then((homeworks1) => {
+                console.log(homeworks1)
+                props.setPublishedHomeworks(homeworks1.filter(hw => hw.is_public === true));
+                //props.setError('');
+            })
+            .catch((error) => {
+                console.log(error.message);
+                //props.setError(error.message);
+                props.setPublishedHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    //props.setAuthStatus(false);
+                    //navigate("/");
+                }
+            })
+        setHomeworks(homeworks.filter(hw2 => hw2.id !== hw.id));
+
     }
 
     function saveDraft(hw) {
@@ -57,7 +76,7 @@ function Homeworks(props) {
                 "id": hw.id,
                 "title": hw.title,
                 "description": hw.description,
-                "assignment_date": hw.assign_date,
+                "assignment_date": hw.assignment_date,
                 "due_date": hw.due_date,
                 "is_public": false,
                 "subject": hw.subject
@@ -69,6 +88,20 @@ function Homeworks(props) {
             console.log(hw.id)
             updateHomework(hw.id)
         }
+
+        getHomeworks()
+            .then((homeworks1) => {
+                props.setSavedHomeworks(homeworks1.filter(hw => hw.is_public === false));
+            })
+            .catch((error) => {
+                console.log(error.message);
+                props.setError(error.message)
+                props.setSavedHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    navigate("/");
+                }
+            });
+        setHomeworks(homeworks.filter(hw2 => hw2.id !== hw.id));
     }
 
     const handleAddHomework = () => {
@@ -77,7 +110,7 @@ function Homeworks(props) {
             id, showInput: false, showDates: false,
             showTitle: false, title: '', description: '',
             is_saved: false, is_public: false, due_date: '',
-            assign_date: '', subject: { code: '', name: '' },
+            assignment_date: '', subject: { code: '', name: '' },
             showSubject: false
         }]);
     };
@@ -107,7 +140,7 @@ function Homeworks(props) {
 
     const handleAssignDateChange = (id, value) => {
         setHomeworks(homeworks.map(hw =>
-            hw.id === id ? { ...hw, assign_date: value } : hw
+            hw.id === id ? { ...hw, assignment_date: value } : hw
         ));
     };
 
@@ -138,7 +171,7 @@ function Homeworks(props) {
                 ? { ...hw2, showSubject: !hw2.showSubject }
                 : hw2
         ))
-    };;
+    };
 
     const handleSelect = (hw, option) => {
         setHomeworks(homeworks.map(hw2 =>
@@ -217,7 +250,7 @@ function Homeworks(props) {
                                     <input
                                         type="datetime-local"
                                         className="form-control"
-                                        value={hw.assign_date}
+                                        value={hw.assignment_date}
                                         onChange={(e) => handleAssignDateChange(hw.id, e.target.value)}
                                     />
                                 </div>

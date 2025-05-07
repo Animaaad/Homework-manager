@@ -89,7 +89,7 @@ router.delete("/logout", (req, res) => {
 
 router.get('/me', async (req, res) => {
     const userId = req.session.userId;
-    console.log(userId)
+    //console.log(userId)
 
     if (!userId) {
         return res.status(401).json({ error: 'Not authenticated' });
@@ -98,11 +98,11 @@ router.get('/me', async (req, res) => {
     try {
         const result = await getUser(userId);
         const user = result.rows[0];
-        console.log(user + "qaqaqaq")
+        //console.log(user + "qaqaqaq")
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        console.log(user);
+        //console.log(user);
         res.json({ user });
     } catch (error) {
         console.error(error);

@@ -3,110 +3,152 @@ import { useNavigate } from "react-router-dom";
 import { addHomework, getHomeworks, getSubjects, updateHomework, deleteHomework } from '../services/homeworkService';
 
 function SavedHomeworks(props) {
-    const [homeworks, setHomeworks] = useState([]);
+    //const [props.savedHomeworks, props.setSavedHomeworks] = useState([]);
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         getHomeworks()
-            .then((homeworks) => {
-                setHomeworks(homeworks.filter(hw => hw.is_public === false));
+            .then((homeworks1) => {
+                props.setSavedHomeworks(homeworks1.filter(hw => hw.is_public === false));
             })
             .catch((error) => {
                 console.log(error.message);
                 props.setError(error.message)
-                setHomeworks([]);
+                props.setSavedHomeworks([]);
                 if (error.message === 'Not authenticated') {
                     navigate("/");
                 }
             });
     }, []);
 
-    function publishNewHomework(hw) {
-        setHomeworks(homeworks.map(hw2 =>
-            hw2.id === hw.id ? { ...hw2, is_saved: true, is_public: true } : hw2
-        ));
-        if (!hw.is_saved) {
-            addHomework({
-                id: hw.id,
-                title: hw.title,
-                description: hw.description,
-                assignment_date: hw.assign_date,
-                due_date: hw.due_date,
-                is_public: true,
-                subject: hw.subject
-            }).catch((error) => {
-                console.log(error.message);
-            });
-        } else {
-            updateHomework(hw.id);
-        }
-    }
+    const formatForDatetimeLocal = (timestamp) => {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        if (isNaN(date)) return ''; // guard against invalid date
+        const offset = date.getTimezoneOffset(); // local timezone adjustment
+        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+        return localDate.toISOString().slice(0, 16); // 'YYYY-MM-DDTHH:mm'
+    };
+    const handleDueDateChange = (id, newDate) => {
+        props.setSavedHomeworks(prev =>
+            prev.map(hw => hw.id === id ?
+                { ...hw, newDate: newDate } : hw
+            ));
+    };
+
+    const handleAssignDateChange = (id, newDate) => {
+        props.setSavedHomeworks(prev =>
+            prev.map(hw => hw.id === id ?
+                { ...hw, newAssignDate: newDate } : hw
+            ));
+    };
+
 
     function saveDraft(hw) {
-        setHomeworks(homeworks.map(hw2 =>
-            hw2.id === hw.id ? { ...hw2, is_saved: true } : hw2
+        const newDueDate = new Date(hw.newDate);
+        const newAssignDate = new Date(hw.newAssignDate);
+        const oldDate = new Date(hw.due_date);
+        const oldADate = new Date(hw.assignment_date);
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
+            hw2.id === hw.id ? {
+                ...hw2, is_saved: true,
+                due_date: newDueDate || oldDate, assignment_date: newAssignDate || oldADate
+            } : hw2
         ));
-        if (!hw.is_saved) {
-            addHomework({
-                id: hw.id,
-                title: hw.title,
-                description: hw.description,
-                assignment_date: hw.assign_date,
-                due_date: hw.due_date,
-                is_public: false,
-                subject: hw.subject
-            }).catch((error) => {
+        updateHomework(hw.id, newDueDate, newAssignDate, hw.title, hw.description, hw.is_public);
+        getHomeworks()
+            .then((homeworks1) => {
+                props.setSavedHomeworks(homeworks1.filter(hw => hw.is_public === false));
+            })
+            .catch((error) => {
                 console.log(error.message);
+                props.setError(error.message)
+                props.setSavedHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    navigate("/");
+                }
             });
+    }
+
+    function publishNewHomework(hw) {
+        const newDueDate = new Date(hw.newDate);
+        const newAssignDate = new Date(hw.newAssignDate);
+        const oldDate = new Date(hw.due_date);
+        const oldADate = new Date(hw.assignment_date);
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
+            hw2.id === hw.id ? {
+                ...hw2, is_saved: true,
+                due_date: newDueDate || oldDate, assignment_date: newAssignDate || oldADate
+            } : hw2
+        ));
+        console.log(oldADate + "ayaya" + oldDate )
+        if (newAssignDate < newDueDate) {
+            updateHomework(hw.id, newDueDate, newAssignDate, hw.title, hw.description, true);
         } else {
-            updateHomework(hw.id);
+            alert("Due date has to be set later than the assignment date.");
         }
+        getHomeworks()
+            .then((homeworks1) => {
+                console.log(homeworks1)
+                props.setPublishedHomeworks(homeworks1.filter(hw => hw.is_public === true));
+                //props.setError('');
+            })
+            .catch((error) => {
+                console.log(error.message);
+                //props.setError(error.message);
+                props.setPublishedHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    //props.setAuthStatus(false);
+                    //navigate("/");
+                }
+            })
+        getHomeworks()
+            .then((homeworks1) => {
+                props.setSavedHomeworks(homeworks1.filter(hw => hw.is_public === false));
+            })
+            .catch((error) => {
+                console.log(error.message);
+                props.setError(error.message)
+                props.setSavedHomeworks([]);
+                if (error.message === 'Not authenticated') {
+                    navigate("/");
+                }
+            });
     }
 
     const handleToggleDescription = (id) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === id ? { ...hw2, showInput: !hw2.showInput } : hw2
         ));
     };
 
     const handleToggleTitle = (id) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === id ? { ...hw2, showTitle: !hw2.showTitle } : hw2
         ));
+        console.log(props.savedHomeworks)
     };
 
     const handleToggleDates = (id) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === id ? { ...hw2, showDates: !hw2.showDates } : hw2
         ));
     };
 
-    const handleDueDateChange = (id, value) => {
-        setHomeworks(homeworks.map(hw2 =>
-            hw2.id === id ? { ...hw2, due_date: value } : hw2
-        ));
-    };
-
-    const handleAssignDateChange = (id, value) => {
-        setHomeworks(homeworks.map(hw2 =>
-            hw2.id === id ? { ...hw2, assign_date: value } : hw2
-        ));
-    };
-
     const handleDelete = (id) => {
-        setHomeworks(homeworks.filter(hw2 => hw2.id !== id));
+        props.setSavedHomeworks(props.savedHomeworks.filter(hw2 => hw2.id !== id));
         deleteHomework({ id });
     };
 
     const handleInputChange = (id, newText) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === id ? { ...hw2, description: newText } : hw2
         ));
     };
 
     const handleTitleChange = (id, newText) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === id ? { ...hw2, title: newText } : hw2
         ));
     };
@@ -127,7 +169,7 @@ function SavedHomeworks(props) {
             })
             .catch((error) => {
                 console.log(error.message);
-                setHomeworks([]);
+                props.setSavedHomeworks([]);
                 if (error.message === 'Not authenticated') {
                     navigate("/");
                 }
@@ -135,7 +177,7 @@ function SavedHomeworks(props) {
     }, []);
 
     const toggleSubject = (hw) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === hw.id
                 ? { ...hw2, showSubject: !hw2.showSubject }
                 : hw2
@@ -143,7 +185,7 @@ function SavedHomeworks(props) {
     };
 
     const handleSelect = (hw, option) => {
-        setHomeworks(homeworks.map(hw2 =>
+        props.setSavedHomeworks(props.savedHomeworks.map(hw2 =>
             hw2.id === hw.id
                 ? { ...hw2, subject: option, showSubject: false }
                 : hw2
@@ -157,7 +199,7 @@ function SavedHomeworks(props) {
 
     return (
         <div className="container mt-4">
-            {homeworks.map((hw) => (
+            {props.savedHomeworks.map((hw) => (
                 <div key={hw.id} className="card mb-4 shadow-sm">
                     <div className="card-body">
                         <div className="d-flex flex-wrap gap-2 mb-3">
@@ -217,7 +259,8 @@ function SavedHomeworks(props) {
                                     <input
                                         type="datetime-local"
                                         className="form-control"
-                                        value={hw.assign_date}
+                                        value={formatForDatetimeLocal(hw.newAssignDate)
+                                            || formatForDatetimeLocal(hw.assignment_date)}
                                         onChange={(e) => handleAssignDateChange(hw.id, e.target.value)}
                                     />
                                 </div>
@@ -226,7 +269,8 @@ function SavedHomeworks(props) {
                                     <input
                                         type="datetime-local"
                                         className="form-control"
-                                        value={hw.due_date}
+                                        value={formatForDatetimeLocal(hw.newDate)
+                                            || formatForDatetimeLocal(hw.due_date)}
                                         onChange={(e) => handleDueDateChange(hw.id, e.target.value)}
                                     />
                                 </div>
